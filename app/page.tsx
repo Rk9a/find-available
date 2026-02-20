@@ -13,9 +13,6 @@ export default function Home() {
   const [endTime, setEndTime] = useState("1500");
   const [availableRooms, setAvailableRooms] = useState<string[]>([]);
 
-  // -----------------------------
-  // 1️⃣ Auto-generate Buildings
-  // -----------------------------
   const buildings = useMemo(() => {
     const set = new Set<string>();
 
@@ -31,9 +28,7 @@ export default function Home() {
     return Array.from(set).sort((a, b) => Number(a) - Number(b));
   }, []);
 
-  // -----------------------------
-  // 2️⃣ Handle Search
-  // -----------------------------
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -70,7 +65,6 @@ export default function Home() {
           (selectedDay === "W" && mt.wednesday) ||
           (selectedDay === "R" && mt.thursday);
 
-        // ✅ Interval Overlap Logic
         if (
           dayMatch &&
           userStart < classEnd &&
