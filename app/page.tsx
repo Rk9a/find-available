@@ -85,13 +85,26 @@ export default function Home() {
   <div className={styles.container}>
     <div className={styles.wrapper}>
 <div className={styles.logoContainer}>
+<div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    marginBottom: "20px",
+  }}
+>
   <Image
-    src="/logo2.png"
+    src="/logo4.svg"
     alt="Find Available Logo"
-    width={220}
-    height={100}
+    width={0}
+    height={0}
+    sizes="100vw"
+    style={{
+      width: "200px",
+      height: "auto",
+    }}
     priority
   />
+</div>
 </div>
       <div className={styles.card}>
         <form onSubmit={handleSearch} className={styles.form}>

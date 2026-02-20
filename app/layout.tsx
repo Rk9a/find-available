@@ -24,9 +24,26 @@ export default function RootLayout({
           backgroundColor: "#ffffff",
           color: "#111111",
           margin: 0,
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-        {children}
+        <div style={{ flex: 1 }}>
+          {children}
+        </div>
+
+        <footer
+          style={{
+            textAlign: "center",
+            padding: "20px 0",
+            fontSize: "13px",
+            letterSpacing: "1px",
+            opacity: 0.7,
+          }}
+        >
+          © {new Date().getFullYear()} • Designed by Rayan
+        </footer>
       </body>
     </html>
   );
