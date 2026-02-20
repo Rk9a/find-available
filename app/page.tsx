@@ -86,7 +86,7 @@ export default function Home() {
     <div className={styles.wrapper}>
 <div className={styles.logoContainer}>
   <Image
-    src="/logo.png"
+    src="/logo2.png"
     alt="Find Available Logo"
     width={220}
     height={100}

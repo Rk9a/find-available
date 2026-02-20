@@ -1,63 +1,83 @@
-.logoContainer {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 40px;
-}
-
 .container {
   min-height: 100vh;
   background-color: #ffffff;
-  padding: 40px;
-  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
 }
 
 .wrapper {
-  max-width: 800px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 1000px;
 }
 
-.title {
-  text-align: center;
+.logoContainer {
+  display: flex;
+  justify-content: center;
   margin-bottom: 30px;
 }
 
 .card {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   margin-bottom: 30px;
 }
 
 .form {
-  display: grid;
-  gap: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form select,
+.form input {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  background-color: #ffffff;
 }
 
 .timeRow {
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
 .button {
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 10px;
   border: none;
-  background-color: #00432d;
-  color: rgb(255, 255, 255);
+  background-color: #0e342b;
+  color: #ffffff;
+  font-weight: 500;
   cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.button:hover {
+  opacity: 0.85;
+}
+
+.heading {
+  margin-bottom: 16px;
+  font-weight: 600;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 10px;
+  gap: 14px;
 }
 
 .roomCard {
-  background: rgb(255, 255, 255);
-  padding: 12px;
-  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px;
   text-align: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
