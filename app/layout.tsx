@@ -19,32 +19,43 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={jetbrains.className}
-        style={{
-          backgroundColor: "#ffffff",
-          color: "#111111",
-          margin: 0,
-          minHeight: "100vh",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <div style={{ flex: 1 }}>
-          {children}
-        </div>
+  className={jetbrains.className}
+  style={{
+    backgroundColor: "#ffffff",
+    color: "#111111",
+    margin: 0,
+  }}
+>
+  <div
+    style={{
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+    }}
+  >
+    <main style={{ flex: 1 }}>
+      {children}
+    </main>
 
-        <footer
-          style={{
-            textAlign: "center",
-            padding: "20px 0",
-            fontSize: "13px",
-            letterSpacing: "1px",
-            opacity: 0.7,
-          }}
-        >
-          © {new Date().getFullYear()} • Designed by Rayan
-        </footer>
-      </body>
+    <footer
+  style={{
+    position: "fixed",
+    bottom: 0,
+    left: 0,
+    width: "100%",
+    textAlign: "center",
+    padding: "12px 0",
+    fontSize: "13px",
+    letterSpacing: "1px",
+    opacity: 0.7,
+    backgroundColor: "#ffffff",
+    borderTop: "1px solid #e5e5e5",
+  }}
+>
+   {new Date().getFullYear()} • Designed by Rayan
+</footer>
+  </div>
+</body>
     </html>
   );
 }
