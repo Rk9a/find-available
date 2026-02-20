@@ -1,65 +1,165 @@
+"use client";
 import Image from "next/image";
+import styles from "./page.module.css";
+import { useState, useMemo } from "react";
+import classesDataJson from "../data/classes.json";
+
+const classesData = classesDataJson as any;
 
 export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const [selectedBuilding, setSelectedBuilding] = useState("");
+  const [selectedDay, setSelectedDay] = useState("U");
+  const [startTime, setStartTime] = useState("1300");
+  const [endTime, setEndTime] = useState("1500");
+  const [availableRooms, setAvailableRooms] = useState<string[]>([]);
+
+  // -----------------------------
+  // 1️⃣ Auto-generate Buildings
+  // -----------------------------
+  const buildings = useMemo(() => {
+    const set = new Set<string>();
+
+    classesData.data.forEach((cls: any) => {
+      cls.meetingsFaculty?.forEach((meeting: any) => {
+        const mt = meeting.meetingTime;
+        if (mt?.building) {
+          set.add(mt.building);
+        }
+      });
+    });
+
+    return Array.from(set).sort((a, b) => Number(a) - Number(b));
+  }, []);
+
+  // -----------------------------
+  // 2️⃣ Handle Search
+  // -----------------------------
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const userStart = Number(startTime);
+    const userEnd = Number(endTime);
+
+    if (userEnd <= userStart) {
+      alert("End time must be after start time.");
+      return;
+    }
+
+    const allRooms = new Set<string>();
+    const occupiedRooms = new Set<string>();
+
+    classesData.data.forEach((cls: any) => {
+      cls.meetingsFaculty?.forEach((meeting: any) => {
+        const mt = meeting.meetingTime;
+        if (!mt) return;
+
+        if (mt.building !== selectedBuilding) return;
+
+        const room = mt.room;
+        if (!room) return;
+
+        allRooms.add(room);
+
+        const classStart = Number(mt.beginTime);
+        const classEnd = Number(mt.endTime);
+
+        const dayMatch =
+          (selectedDay === "U" && mt.sunday) ||
+          (selectedDay === "M" && mt.monday) ||
+          (selectedDay === "T" && mt.tuesday) ||
+          (selectedDay === "W" && mt.wednesday) ||
+          (selectedDay === "R" && mt.thursday);
+
+        // ✅ Interval Overlap Logic
+        if (
+          dayMatch &&
+          userStart < classEnd &&
+          userEnd > classStart
+        ) {
+          occupiedRooms.add(room);
+        }
+      });
+    });
+
+    const free = [...allRooms]
+      .filter(room => !occupiedRooms.has(room))
+      .sort();
+
+    setAvailableRooms(free);
+  };
+    return (
+  <div className={styles.container}>
+    <div className={styles.wrapper}>
+<div className={styles.logoContainer}>
+  <Image
+    src="/logo.png"
+    alt="Find Available Logo"
+    width={220}
+    height={100}
+    priority
+  />
+</div>
+      <div className={styles.card}>
+        <form onSubmit={handleSearch} className={styles.form}>
+          <select
+            value={selectedBuilding}
+            onChange={e => setSelectedBuilding(e.target.value)}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+            <option value="">Select Building</option>
+            {buildings.map(b => (
+              <option key={b} value={b}>
+                Building {b}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={selectedDay}
+            onChange={e => setSelectedDay(e.target.value)}
+          >
+            <option value="U">Sun</option>
+            <option value="M">Mon</option>
+            <option value="T">Tue</option>
+            <option value="W">Wed</option>
+            <option value="R">Thu</option>
+          </select>
+
+          <div className={styles.timeRow}>
+            <input
+              type="time"
+              step="1800"
+              value={`${startTime.slice(0, 2)}:${startTime.slice(2)}`}
+              onChange={e =>
+                setStartTime(e.target.value.replace(":", ""))
+              }
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+
+            <input
+              type="time"
+              step="1800"
+              value={`${endTime.slice(0, 2)}:${endTime.slice(2)}`}
+              onChange={e =>
+                setEndTime(e.target.value.replace(":", ""))
+              }
+            />
+          </div>
+
+          <button type="submit" className={styles.button}>
+            Search
+          </button>
+        </form>
+      </div>
+
+      <h2>Available Rooms ({availableRooms.length})</h2>
+
+      <div className={styles.grid}>
+        {availableRooms.map(room => (
+          <div key={room} className={styles.roomCard}>
+            Room {room}
+          </div>
+        ))}
+      </div>
     </div>
-  );
+  </div>
+);
 }
