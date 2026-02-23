@@ -124,6 +124,7 @@ export default function Home() {
             value={selectedDay}
             onChange={e => setSelectedDay(e.target.value)}
           >
+            <option value="U">Select Day</option>
             <option value="U">Sun</option>
             <option value="M">Mon</option>
             <option value="T">Tue</option>
@@ -132,6 +133,7 @@ export default function Home() {
           </select>
 
           <div className={styles.timeRow}>
+            <p>start:</p>
             <input
               type="time"
               step="1800"
@@ -140,7 +142,7 @@ export default function Home() {
                 setStartTime(e.target.value.replace(":", ""))
               }
             />
-
+            <p>end:</p>
             <input
               type="time"
               step="1800"
@@ -156,7 +158,9 @@ export default function Home() {
           </button>
         </form>
       </div>
-
+      <p style={{ fontSize: "14px", color: "#6b7280" }}>
+        <i>Note: timings might not be accurate due to Ramadan Reschedule</i>
+      </p>
       <h2>Available Rooms ({availableRooms.length})</h2>
 
       <div className={styles.grid}>
