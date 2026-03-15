@@ -39,7 +39,7 @@ export default function RootLayout({
 
     <footer
   style={{
-    position: "fixed",
+    position: "relative",
     bottom: 0,
     left: 0,
     width: "100%",

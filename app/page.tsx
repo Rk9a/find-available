@@ -158,9 +158,6 @@ export default function Home() {
           </button>
         </form>
       </div>
-      <p style={{ fontSize: "14px", color: "#6b7280" }}>
-        <i>Note: timings might not be accurate due to Ramadan Reschedule</i>
-      </p>
       <h2>Available Rooms ({availableRooms.length})</h2>
 
       <div className={styles.grid}>
