@@ -14,7 +14,7 @@
 .logoContainer {
   display: flex;
   justify-content: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .card {
@@ -84,4 +84,399 @@
 }
 .roomCard:hover {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+}
+.modeSwitch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  background: #f9fafb;
+  padding: 6px;
+  border-radius: 14px;
+  margin-bottom: 12px;
+}
+
+.modeButton {
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.activeMode {
+  background: #115E65;
+  color: white;
+}
+
+.modeDescription {
+  text-align: center;
+  margin: 0 0 24px;
+  font-size: 14px;
+  color: #6b7280;
+}
+.statusCard {
+  margin-top: 20px;
+  padding: 24px;
+  border-radius: 14px;
+  text-align: center;
+  background: #ffffff;
+}
+
+.statusRoom {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.statusAvailable {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #115E65;
+}
+
+.statusBusy {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #991b1b;
+}
+
+.statusDetails {
+  margin: 8px 0 0;
+  color: #6b7280;
+}
+.scheduleCard {
+  margin-top: 20px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.scheduleHeader {
+  display: grid;
+  grid-template-columns: 60px repeat(7, 1fr);
+  min-width: 800px;
+}
+
+.scheduleHeaderDay {
+  text-align: center;
+  font-weight: 600;
+  padding-bottom: 12px;
+}
+
+.scheduleBody {
+  position: relative;
+  min-width: 800px;
+  height: 1200px;
+}
+
+.hourLine {
+  position: absolute;
+  left: 60px;
+  right: 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.hourLabel {
+  position: absolute;
+  left: 0;
+  width: 50px;
+  transform: translateY(-50%);
+  text-align: right;
+  padding-right: 10px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.dayColumns {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 60px;
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.dayColumn {
+  position: relative;
+  border-left: 1px solid #f0f0f0;
+}
+
+.dayColumn:last-child {
+  border-right: 1px solid #f0f0f0;
+}
+.meetingBlock {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+
+  background-color: #115E65;
+  color: #ffffff;
+
+  border-radius: 8px;
+  padding: 7px 8px;
+
+  box-sizing: border-box;
+  overflow: hidden;
+
+  z-index: 5;
+}
+
+.meetingCourse {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.meetingTime {
+  margin: 4px 0 0;
+  font-size: 11px;
+  line-height: 1.2;
+  opacity: 0.85;
+}
+.nowLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #dc2626;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.nowDot {
+  position: absolute;
+  left: -5px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #dc2626;
+  transform: translateY(-50%);
+}
+
+.nowLabel {
+  position: absolute;
+  right: 4px;
+  top: -18px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #dc2626;
+  background: #ffffff;
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+.wrapper {
+  width: 100%;
+  max-width: 1000px;
+  position: relative;
+}
+
+.themeToggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #f9fafb;
+  color: #374151;
+
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.themeToggle:hover {
+  transform: scale(1.05);
+}
+/* Dark mode — neutral dim gray */
+
+.dark {
+  background-color: #181818;
+  color: #e8e8e8;
+}
+
+.dark .card,
+.dark .modeSwitch {
+  background: #242424;
+  border-color: #353535;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+.dark .form select,
+.dark .form input {
+  background-color: #303030;
+  color: #eeeeee;
+  border-color: #404040;
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.18);
+}
+
+.dark .form select:disabled {
+  color: #777777;
+}
+
+.dark .modeButton {
+  color: #c8c8c8;
+}
+
+.dark .activeMode {
+  background: #115E65;
+  color: #ffffff;
+}
+
+.dark .modeDescription,
+.dark .statusRoom,
+.dark .statusDetails,
+.dark .hourLabel {
+  color: #a8a8a8;
+}
+
+.dark .statusCard,
+.dark .scheduleCard,
+.dark .roomCard {
+  background: #242424;
+  border-color: #353535;
+}
+
+.dark .hourLine {
+  border-color: #3a3a3a;
+}
+
+.dark .dayColumn {
+  border-left-color: #343434;
+}
+
+.dark .dayColumn:last-child {
+  border-right-color: #343434;
+}
+
+.dark .meetingBlock {
+  background-color: #0f766e;
+}
+
+.dark .themeToggle {
+  background: #2c2c2c;
+  color: #eeeeee;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.dark .nowLabel {
+  background: #242424;
+}
+
+.dark .logoContainer img {
+  filter: brightness(1.45) contrast(1.2);
+}
+.liveIndicator {
+  width: fit-content;
+  margin: 0 auto 16px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 9px 15px;
+  border-radius: 24px;
+
+  background: #ffffff;
+  color: #555555;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+}
+
+.liveDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #16a34a;
+}
+
+.dark .liveIndicator {
+  background: #242424;
+  color: #d0d0d0;
+}
+.liveDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+
+  box-shadow:
+    0 0 5px #22c55e,
+    0 0 10px rgba(34, 197, 94, 0.65),
+    0 0 16px rgba(34, 197, 94, 0.35);
+}
+.liveDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+
+  box-shadow:
+    0 0 5px #22c55e,
+    0 0 10px rgba(34, 197, 94, 0.65),
+    0 0 16px rgba(34, 197, 94, 0.35);
+
+  animation: liveGlow 2s ease-in-out infinite;
+}
+
+@keyframes liveGlow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 4px #22c55e,
+      0 0 8px rgba(34, 197, 94, 0.5);
+  }
+
+  50% {
+    box-shadow:
+      0 0 7px #22c55e,
+      0 0 14px rgba(34, 197, 94, 0.8),
+      0 0 20px rgba(34, 197, 94, 0.4);
+  }
+}
+.loadingDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #eab308;
+
+  box-shadow:
+    0 0 6px #eab308,
+    0 0 12px rgba(234, 179, 8, 0.7),
+    0 0 18px rgba(234, 179, 8, 0.4);
+
+  animation: loadingGlow 1.2s ease-in-out infinite;
+}
+
+@keyframes loadingGlow {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }

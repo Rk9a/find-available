@@ -18,14 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-  className={jetbrains.className}
-  style={{
-    backgroundColor: "#ffffff",
-    color: "#111111",
-    margin: 0,
-  }}
->
+      <body className={jetbrains.className}>
   <div
     style={{
       minHeight: "100vh",
@@ -37,21 +30,7 @@ export default function RootLayout({
       {children}
     </main>
 
-    <footer
-  style={{
-    position: "relative",
-    bottom: 0,
-    left: 0,
-    width: "100%",
-    textAlign: "center",
-    padding: "12px 0",
-    fontSize: "13px",
-    letterSpacing: "1px",
-    opacity: 0.7,
-    backgroundColor: "#ffffff",
-    borderTop: "1px solid #e5e5e5",
-  }}
->
+    <footer className="site-footer">
    {new Date().getFullYear()} • Designed by Rayan
 </footer>
   </div>
