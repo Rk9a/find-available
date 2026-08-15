@@ -2,6 +2,7 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import { useState, useMemo, useEffect } from "react";
+import Link from "next/dist/client/link";
 
 function getKFUPMNow() {
   const now = new Date();
@@ -105,6 +106,7 @@ export default function Home() {
       return next;
     });
   };
+
 
   useEffect(() => {
     async function loadSchedule() {
@@ -357,7 +359,14 @@ export default function Home() {
             </svg>
           )}
         </button>
-
+        <Link
+          href="/info"
+          className={styles.infoButton}
+          aria-label="About Find Available"
+          title="About"
+        >
+          i
+        </Link>
         <div className={styles.logoContainer}>
           <Image
             src="/logo4.svg"
@@ -403,22 +412,22 @@ export default function Home() {
             By Building
           </button>
         </div>
-          <div
-            className={`${styles.liveIndicator} ${scheduleLoading ? styles.loadingIndicator : ""
-              }`}
-          >
-            <span
-              className={
-                scheduleLoading
-                  ? styles.loadingDot
-                  : styles.liveDot
-              }
-            />
+        <div
+          className={`${styles.liveIndicator} ${scheduleLoading ? styles.loadingIndicator : ""
+            }`}
+        >
+          <span
+            className={
+              scheduleLoading
+                ? styles.loadingDot
+                : styles.liveDot
+            }
+          />
 
-            {scheduleLoading
-              ? "Loading Semester ···"
-              : `Live · ${scheduleInfo.shortTerm}`}
-          </div>
+          {scheduleLoading
+            ? "Loading Semester ···"
+            : `Live · ${scheduleInfo.shortTerm}`}
+        </div>
         <p className={styles.modeDescription}>
           {mode === "room"
             ? "Check a specific room and view its weekly schedule."

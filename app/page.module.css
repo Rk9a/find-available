@@ -82,9 +82,11 @@
   font-weight: 500;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+
 .roomCard:hover {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
 }
+
 .modeSwitch {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -116,6 +118,7 @@
   font-size: 14px;
   color: #6b7280;
 }
+
 .statusCard {
   margin-top: 20px;
   padding: 24px;
@@ -148,6 +151,7 @@
   margin: 8px 0 0;
   color: #6b7280;
 }
+
 .scheduleCard {
   margin-top: 20px;
   background: #ffffff;
@@ -210,6 +214,7 @@
 .dayColumn:last-child {
   border-right: 1px solid #f0f0f0;
 }
+
 .meetingBlock {
   position: absolute;
   left: 4px;
@@ -240,6 +245,7 @@
   line-height: 1.2;
   opacity: 0.85;
 }
+
 .nowLine {
   position: absolute;
   left: 0;
@@ -272,6 +278,7 @@
   padding: 1px 4px;
   border-radius: 4px;
 }
+
 .wrapper {
   width: 100%;
   max-width: 1000px;
@@ -280,10 +287,8 @@
 
 .themeToggle {
   position: absolute;
-  top: 0;
-  right: 0;
-
-  width: 42px;
+  top: 24px;
+  right: max(24px, calc((100% - 1040px) / 2));  width: 42px;
   height: 42px;
 
   display: flex;
@@ -307,6 +312,7 @@
 .themeToggle:hover {
   transform: scale(1.05);
 }
+
 /* Dark mode — neutral dim gray */
 
 .dark {
@@ -385,6 +391,7 @@
 .dark .logoContainer img {
   filter: brightness(1.45) contrast(1.2);
 }
+
 .liveIndicator {
   width: fit-content;
   margin: 0 auto 16px;
@@ -416,6 +423,7 @@
   background: #242424;
   color: #d0d0d0;
 }
+
 .liveDot {
   width: 7px;
   height: 7px;
@@ -427,6 +435,7 @@
     0 0 10px rgba(34, 197, 94, 0.65),
     0 0 16px rgba(34, 197, 94, 0.35);
 }
+
 .liveDot {
   width: 7px;
   height: 7px;
@@ -442,6 +451,7 @@
 }
 
 @keyframes liveGlow {
+
   0%,
   100% {
     box-shadow:
@@ -456,6 +466,7 @@
       0 0 20px rgba(34, 197, 94, 0.4);
   }
 }
+
 .loadingDot {
   width: 9px;
   height: 9px;
@@ -471,6 +482,7 @@
 }
 
 @keyframes loadingGlow {
+
   0%,
   100% {
     opacity: 0.45;
@@ -478,5 +490,63 @@
 
   50% {
     opacity: 1;
+  }
+}
+
+.infoButton {
+
+  position: absolute;
+
+  top: 24px;
+
+  left: max(24px, calc((100% - 1040px) / 2));
+
+  width: 42px;
+
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(128, 128, 128, 0.25);
+
+  background: #ffffff;
+
+  color: #333333;
+
+  font-size: 18px;
+
+  font-weight: 700;
+
+  text-decoration: none;
+
+  z-index: 10;
+
+}
+
+.infoButton:hover {
+  transform: translateY(-1px);
+}
+
+.dark .infoButton {
+  background: #292929;
+  color: #e5e5e5;
+  border-color: #444444;
+}
+
+@media (max-width: 600px) {
+  .infoButton {
+    left: 18px;
+    top: 18px;
+  }
+
+  .themeToggle {
+    right: 18px;
+    top: 18px;
   }
 }
