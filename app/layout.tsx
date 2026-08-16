@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import Link from "next/dist/client/link";
+import { Analytics } from "@vercel/analytics/next";
 
 const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
@@ -19,22 +21,25 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={jetbrains.className}>
-  <div
-    style={{
-      minHeight: "100vh",
-      display: "flex",
-      flexDirection: "column",
-    }}
-  >
-    <main style={{ flex: 1 }}>
-      {children}
-    </main>
+        <div
+          style={{
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <main style={{ flex: 1 }}>
+            {children}
+          </main>
 
-    <footer className="site-footer">
-   {new Date().getFullYear()} • Designed by Rayan
-</footer>
-  </div>
-</body>
+          <footer className="site-footer">
+            {new Date().getFullYear()} • Designed by Rayan
+            {" • "}
+            <Link href="/info">About</Link>
+          </footer>
+        </div>
+        <Analytics />
+      </body>
     </html>
   );
 }
