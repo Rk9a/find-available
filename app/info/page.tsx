@@ -1,25 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "./info.module.css";
+import { useDarkMode } from "@/hooks/useDarkMode";
 
 export default function InfoPage() {
-    const [darkMode, setDarkMode] = useState(false);
+    const { darkMode } = useDarkMode();
 
-    useEffect(() => {
-        const savedTheme = localStorage.getItem("theme");
-
-        const isDark =
-            savedTheme === "dark" ||
-            (!savedTheme &&
-                window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-        setDarkMode(isDark);
-
-        document.documentElement.dataset.theme =
-            isDark ? "dark" : "light";
-    }, []);
     return (
         <main
             className={`${styles.page} ${darkMode ? styles.dark : ""

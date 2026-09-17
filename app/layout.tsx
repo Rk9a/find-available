@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import Link from "next/dist/client/link";
+import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
 
 const jetbrains = JetBrains_Mono({

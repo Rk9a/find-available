@@ -1,4 +1,6 @@
 import { unstable_cache } from "next/cache";
+import type { Section } from "./types";
+
 const BASE_TERM = "202610";
 const BANNER_BASE =
   "https://banner9-registration.kfupm.edu.sa/StudentRegistrationSsb/ssb";
@@ -6,6 +8,39 @@ const BANNER_BASE =
 export type BannerTerm = {
   code: string;
   description: string;
+};
+
+// Shape of a Banner section as returned by searchResults, trimmed to the
+// fields this module actually reads. Banner's real response has many more
+// fields, hence the index signature.
+type RawMeetingTime = {
+  building?: string | null;
+  room?: string | null;
+  beginTime?: string;
+  endTime?: string;
+  sunday?: boolean;
+  monday?: boolean;
+  tuesday?: boolean;
+  wednesday?: boolean;
+  thursday?: boolean;
+  friday?: boolean;
+  saturday?: boolean;
+  startDate?: string;
+  endDate?: string;
+  [key: string]: unknown;
+};
+
+type RawSection = {
+  subject: string;
+  courseNumber: string;
+  sequenceNumber: string;
+  meetingsFaculty?: { meetingTime?: RawMeetingTime }[];
+  [key: string]: unknown;
+};
+
+type BannerSearchResults = {
+  totalCount?: number;
+  data?: RawSection[];
 };
 
 export async function getTerms(): Promise<BannerTerm[]> {
@@ -99,7 +134,7 @@ export async function fetchBannerPage(
   cookies: string,
   offset = 0,
   pageSize = 10
-) {
+): Promise<BannerSearchResults> {
   const params = new URLSearchParams({
     txt_term: term,
     startDatepicker: "",
@@ -131,7 +166,7 @@ export async function fetchBannerPage(
 export async function fetchAllBannerSections(
   term: string,
   cookies: string
-) {
+): Promise<{ totalCount: number; sections: RawSection[] }> {
   const pageSize = 500;
 
   const firstPage = await fetchBannerPage(
@@ -164,7 +199,9 @@ export async function fetchAllBannerSections(
     sections,
   };
 }
-export async function getSectionsForTerm(term: string) {
+export async function getSectionsForTerm(
+  term: string
+): Promise<RawSection[]> {
   const cookies = await createBannerSession();
 
   await selectBannerTerm(term, cookies);
@@ -177,7 +214,7 @@ export async function getSectionsForTerm(term: string) {
   return result.sections;
 }
 export function getSemesterEndDate(
-  sections: any[]
+  sections: RawSection[]
 ): Date {
   const endDates: Date[] = [];
 
@@ -244,7 +281,7 @@ export function findNextPublishedTerm(
     null
   );
 }
-export function compactSections(sections: any[]) {
+export function compactSections(sections: RawSection[]): Section[] {
   return sections
     .map(section => ({
       subject: section.subject,
@@ -252,27 +289,27 @@ export function compactSections(sections: any[]) {
       sequenceNumber: section.sequenceNumber,
 
       meetingsFaculty: (section.meetingsFaculty ?? [])
-        .filter((meeting: any) => meeting.meetingTime)
-        .map((meeting: any) => {
-          const mt = meeting.meetingTime;
+        .filter(meeting => meeting.meetingTime)
+        .map(meeting => {
+          const mt = meeting.meetingTime!;
 
           return {
             meetingTime: {
-              building: mt.building,
-              room: mt.room,
-              beginTime: mt.beginTime,
-              endTime: mt.endTime,
+              building: mt.building ?? null,
+              room: mt.room ?? null,
+              beginTime: mt.beginTime ?? "",
+              endTime: mt.endTime ?? "",
 
-              sunday: mt.sunday,
-              monday: mt.monday,
-              tuesday: mt.tuesday,
-              wednesday: mt.wednesday,
-              thursday: mt.thursday,
-              friday: mt.friday,
-              saturday: mt.saturday,
+              sunday: Boolean(mt.sunday),
+              monday: Boolean(mt.monday),
+              tuesday: Boolean(mt.tuesday),
+              wednesday: Boolean(mt.wednesday),
+              thursday: Boolean(mt.thursday),
+              friday: Boolean(mt.friday),
+              saturday: Boolean(mt.saturday),
 
-              startDate: mt.startDate,
-              endDate: mt.endDate,
+              startDate: mt.startDate ?? "",
+              endDate: mt.endDate ?? "",
             },
           };
         }),
