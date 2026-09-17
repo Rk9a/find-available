@@ -2,6 +2,7 @@
 
 import styles from "@/app/page.module.css";
 import type { DaySchedule } from "@/lib/availability";
+import type { ReportedDaySchedule } from "@/lib/reportAvailability";
 import {
   SCHEDULE_START,
   SCHEDULE_DURATION,
@@ -11,6 +12,7 @@ import {
 
 type WeeklyScheduleGridProps = {
   weeklySchedule: DaySchedule[];
+  reportedSchedule?: ReportedDaySchedule[];
   showNowPointer: boolean;
   nowPosition: number;
   currentDay?: string;
@@ -18,6 +20,7 @@ type WeeklyScheduleGridProps = {
 
 export function WeeklyScheduleGrid({
   weeklySchedule,
+  reportedSchedule,
   showNowPointer,
   nowPosition,
   currentDay,
@@ -87,6 +90,40 @@ export function WeeklyScheduleGrid({
                   </div>
                 );
               })}
+
+              {reportedSchedule
+                ?.find(reportedDay => reportedDay.key === day.key)
+                ?.reports.map(report => {
+                  const start = timeToMinutes(report.startTime);
+                  const end = timeToMinutes(report.endTime);
+
+                  const top = ((start - SCHEDULE_START) / SCHEDULE_DURATION) * 100;
+                  const height = ((end - start) / SCHEDULE_DURATION) * 100;
+
+                  const isDraft = report.id === "__draft__";
+
+                  return (
+                    <div
+                      key={report.id}
+                      className={`${styles.reportedMeetingBlock} ${
+                        isDraft ? styles.reportedMeetingBlockDraft : ""
+                      }`}
+                      style={{ top: `${top}%`, height: `${height}%` }}
+                    >
+                      <p className={styles.meetingCourse}>
+                        ⚠︎ {report.subject} {report.courseNumber}
+                        {report.section ? `-${report.section}` : ""}
+                        {isDraft ? " (preview)" : ""}
+                      </p>
+
+                      <p className={styles.meetingTime}>
+                        {report.startTime}
+                        {" – "}
+                        {report.endTime}
+                      </p>
+                    </div>
+                  );
+                })}
             </div>
           ))}
         </div>

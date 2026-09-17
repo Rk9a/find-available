@@ -3,7 +3,6 @@ import {
   type DayCode,
   type WeekDay,
   meetsOnDayCode,
-  meetsOnWeekdayName,
   weekDays,
 } from "./time";
 
@@ -86,29 +85,15 @@ export function buildWeeklySchedule(roomMeetings: RoomMeeting[]): DaySchedule[] 
   }));
 }
 
-export function findCurrentMeeting(
-  roomMeetings: RoomMeeting[],
-  weekdayName: string | undefined,
-  currentTime: number
-): RoomMeeting | undefined {
-  return roomMeetings.find(meeting => {
-    if (!meetsOnWeekdayName(meeting.meetingTime, weekdayName)) return false;
+export type RoomStatus = { room: string; available: boolean };
 
-    const classStart = Number(meeting.meetingTime.beginTime);
-    const classEnd = Number(meeting.meetingTime.endTime);
-
-    return currentTime >= classStart && currentTime < classEnd;
-  });
-}
-
-export function findAvailableRooms(
+export function getRoomAvailability(
   sections: Section[],
   building: string,
   dayCode: DayCode,
   startTime: number,
   endTime: number
-): string[] {
-  const allRooms = new Set<string>();
+): RoomStatus[] {
   const occupiedRooms = new Set<string>();
 
   sections.forEach(section => {
@@ -116,8 +101,6 @@ export function findAvailableRooms(
       const mt = meeting.meetingTime;
 
       if (!mt || mt.building !== building || !mt.room) return;
-
-      allRooms.add(mt.room);
 
       const classStart = Number(mt.beginTime);
       const classEnd = Number(mt.endTime);
@@ -132,5 +115,12 @@ export function findAvailableRooms(
     });
   });
 
-  return [...allRooms].filter(room => !occupiedRooms.has(room)).sort();
+  const rooms = getRoomsForBuilding(sections, building);
+  const available = rooms.filter(room => !occupiedRooms.has(room));
+  const busy = rooms.filter(room => occupiedRooms.has(room));
+
+  return [
+    ...available.map(room => ({ room, available: true })),
+    ...busy.map(room => ({ room, available: false })),
+  ];
 }

@@ -8,20 +8,24 @@ The application uses public course schedule data from KFUPM Banner to determine 
 
 ## Features
 
-### By Room
+### Find a Room
 
-Select a building and room to:
-
-- Check whether the room is currently available.
-- View the room's weekly schedule.
-- See the courses occupying the room.
-- View course and section numbers such as `COE 501-02`.
-
-### By Building
-
-Select a building, day, and time range to find rooms that are available during that period.
+Select a building, day, and time range to see every room in that building split into Available and Busy, live as you adjust the filters. A "Now" button jumps straight to the current KFUPM day/time. Click any room to see its full weekly schedule, with course and section numbers such as `COE 501-02`.
 
 The availability calculation checks for schedule overlap between the requested period and all meetings assigned to rooms in the selected building.
+
+### Reported Classes
+
+Banner data can lag behind reality — a class can be happening in a room the schedule shows as free. Any student can report an unlisted class (course, section, day, time) directly from a room's detail view.
+
+Reports aren't reviewed by an admin. Instead:
+
+- A fresh report shows as a yellow "Reported" flag at 50% confidence.
+- Other students confirm or deny it; confidence rises or falls accordingly (capped below 100%, since it's never treated as ground truth like Banner).
+- Enough denials automatically retire a report — no manual moderation needed.
+- Reporting and voting are tied to an anonymous per-browser id, not an account.
+
+See `lib/reports.ts` for the confidence/retirement logic.
 
 ### Semester Detection
 
@@ -91,6 +95,7 @@ Find Available includes light and dark themes. The selected theme is stored loca
 - TypeScript
 - CSS Modules
 - KFUPM Banner public registration data
+- Upstash Redis (crowd-sourced class reports)
 - Vercel
 
 ## Project Structure
@@ -98,15 +103,47 @@ Find Available includes light and dark themes. The selected theme is stored loca
 ```text
 app/
 ├── api/
+│   ├── reports/
+│   │   ├── [id]/vote/route.ts
+│   │   └── route.ts
 │   └── schedule/
 │       └── route.ts
+├── info/
+│   ├── page.tsx
+│   └── info.module.css
 ├── globals.css
 ├── layout.tsx
 ├── page.module.css
 └── page.tsx
 
+components/
+├── BuildingCombobox.tsx
+├── DaySelect.tsx
+├── LiveIndicator.tsx
+├── ReportClassForm.tsx
+├── ReportedClassCard.tsx
+├── RoomFinder.tsx
+├── ThemeToggle.tsx
+└── WeeklyScheduleGrid.tsx
+
+hooks/
+├── useDarkMode.ts
+├── useDeviceId.ts
+├── useKfupmClock.ts
+├── useRoomAvailability.ts
+├── useRoomReports.ts
+├── useRoomStatuses.ts
+└── useSchedule.ts
+
 lib/
-└── banner.ts
+├── availability.ts
+├── banner.ts
+├── redis.ts
+├── reportAvailability.ts
+├── reports.ts
+├── reportTypes.ts
+├── time.ts
+└── types.ts
 
 public/
 └── ...
@@ -114,9 +151,34 @@ public/
 
 `lib/banner.ts` contains the server-side Banner integration, pagination, semester progression, schedule compaction, and caching logic.
 
-`app/api/schedule/route.ts` exposes the processed schedule to the frontend.
+`lib/availability.ts` and `lib/time.ts` contain the room/building availability calculations and shared time helpers, respectively.
 
-`app/page.tsx` contains the room availability and user-interface logic.
+`lib/reports.ts` holds the crowd-sourced reporting logic (confidence scoring, auto-retirement, rate limiting) against Upstash Redis (`lib/redis.ts`); `lib/reportAvailability.ts` mirrors `lib/availability.ts`'s overlap checks for reported classes.
+
+`app/api/schedule/route.ts` exposes the processed schedule to the frontend; `app/api/reports/` exposes report creation, listing, and voting.
+
+`app/page.tsx` composes `components/RoomFinder.tsx` out of the state/data hooks in `hooks/`:
+
+- `useSchedule` fetches and caches the schedule from `/api/schedule`.
+- `useKfupmClock` tracks the current time in KFUPM's timezone.
+- `useDarkMode` persists the selected theme and avoids a flash of the wrong theme on load.
+- `useRoomAvailability` / `useRoomStatuses` derive buildings, rooms, and per-room availability for the selected building/day/time.
+- `useDeviceId` / `useRoomReports` back the reporting feature (anonymous device id, fetching/refetching reports for the selected building).
+
+`app/info/page.tsx` is the About page, with a link to report issues on GitHub.
+
+## Environment Variables
+
+The reporting feature stores reports/votes in Upstash Redis. Create a free database at [upstash.com](https://upstash.com) (or via the "Upstash" integration in the Vercel Marketplace) and set:
+
+```text
+UPSTASH_REDIS_REST_URL=...
+UPSTASH_REDIS_REST_TOKEN=...
+```
+
+Locally, put these in a `.env.local` file at the project root (already gitignored). On Vercel, add both under Project Settings → Environment Variables for every environment you deploy to (Production/Preview/Development), then redeploy.
+
+Without these set, the rest of the app (schedule/availability) still works — only report creation/voting will fail gracefully with a "Failed to load/create report" error.
 
 ## Running Locally
 
@@ -128,7 +190,7 @@ cd find-available
 npm install
 ```
 
-Start the development server:
+Set up the environment variables above, then start the development server:
 
 ```bash
 npm run dev
@@ -161,6 +223,8 @@ Find Available uses publicly accessible KFUPM Banner schedule information.
 Banner session cookies required for schedule requests are created dynamically on the server. Session cookie values are not hard-coded in the repository and are not exposed to the frontend.
 
 The frontend communicates with the application's own `/api/schedule` endpoint rather than directly managing Banner sessions.
+
+Reported classes are tied to a random device id generated in the browser and stored in `localStorage` — no accounts, names, or other identifying information are collected.
 
 ## Disclaimer
 

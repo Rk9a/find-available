@@ -40,11 +40,105 @@
   font-size: 14px;
   background-color: #ffffff;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+  width: 100%;
+}
+
+.comboboxTrigger {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  padding-right: 36px;
+  border-radius: 10px;
+  border: 0px solid #d1d5db;
+  font-size: 14px;
+  font-family: inherit;
+  color: inherit;
+  text-align: left;
+  background-color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+  cursor: pointer;
+}
+
+.comboboxTrigger:focus-visible {
+  outline: 2px solid #115E65;
+  outline-offset: 2px;
+}
+
+.comboboxCaret {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.fieldLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.filterHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.filterHeader .heading {
+  margin: 0;
+}
+
+.resetLink {
+  border: none;
+  background: none;
+  color: #115E65;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.resetLink:hover {
+  text-decoration: underline;
 }
 
 .timeRow {
   display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
   gap: 12px;
+}
+
+.timeRow .fieldLabel {
+  flex: 1 1 120px;
+  min-width: 120px;
+}
+
+.nowButton {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #115E65;
+  background-color: transparent;
+  color: #115E65;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  white-space: nowrap;
+}
+
+.nowButton:hover {
+  background-color: #115E65;
+  color: #ffffff;
 }
 
 .button {
@@ -63,7 +157,7 @@
 }
 
 .heading {
-  margin-bottom: 16px;
+  margin: 24px 0 16px;
   font-weight: 600;
 }
 
@@ -76,10 +170,15 @@
 .roomCard {
   background: #ffffff;
   border: 1px solid #e5e7eb;
+  border-left: 4px solid #e5e7eb;
   border-radius: 12px;
   padding: 14px;
   text-align: center;
   font-weight: 500;
+  font-size: 14px;
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
@@ -87,29 +186,292 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
 }
 
-.modeSwitch {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  background: #f9fafb;
-  padding: 6px;
-  border-radius: 14px;
-  margin-bottom: 12px;
+.roomCard:focus-visible {
+  outline: 2px solid #115E65;
+  outline-offset: 2px;
 }
 
-.modeButton {
-  padding: 12px;
-  border: none;
+.roomCardAvailable {
+  border-left-color: #115E65;
+}
+
+.roomCardBusy {
+  border-left-color: #991b1b;
+  opacity: 0.65;
+}
+
+.roomCardSelected {
+  outline: 2px solid #115E65;
+  outline-offset: 2px;
+}
+
+.reportDot {
+  margin-left: 6px;
+  font-size: 12px;
+  color: #b45309;
+}
+
+.reportTrigger {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px;
   border-radius: 10px;
+  border: 1px dashed #d97706;
   background: transparent;
-  font-size: 14px;
+  color: #b45309;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+}
+
+.reportTrigger:hover {
+  background: rgba(217, 119, 6, 0.08);
+}
+
+.reportCard {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+}
+
+.reportHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.reportBadge {
+  font-size: 12px;
+  font-weight: 700;
+  color: #b45309;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.reportConfidence {
+  font-size: 12px;
+  color: #92400e;
+}
+
+.reportCourse {
+  margin: 0 0 4px;
+  font-weight: 700;
+  font-size: 15px;
+  color: #78350f;
+}
+
+.reportMeta {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: #78350f;
+}
+
+.reportNote {
+  margin: 4px 0;
+  font-size: 13px;
+  font-style: italic;
+  color: #78350f;
+}
+
+.reportVotes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.reportVotePrompt {
+  font-size: 13px;
+  color: #78350f;
+  margin-right: 4px;
+}
+
+.voteButton {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #d97706;
+  background: #ffffff;
+  color: #92400e;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
 }
 
-.activeMode {
+.voteButton:hover:not(:disabled) {
+  background: #fef3c7;
+}
+
+.voteButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.voteButtonConfirmActive {
   background: #115E65;
-  color: white;
+  border-color: #115E65;
+  color: #ffffff;
+}
+
+.voteButtonDenyActive {
+  background: #991b1b;
+  border-color: #991b1b;
+  color: #ffffff;
+}
+
+.reportFormCard {
+  margin-top: 16px;
+  padding: 20px;
+  border-radius: 14px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.reportFormCard input,
+.reportFormCard textarea {
+  padding: 12px;
+  border-radius: 10px;
+  border: 0px solid #d1d5db;
+  font-size: 14px;
+  font-family: inherit;
+  background-color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.reportFormTitle {
+  margin: 0;
+  font-weight: 700;
+  font-size: 15px;
+  color: #78350f;
+}
+
+.reportFormRow {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.reportFormRow .fieldLabel {
+  flex: 1 1 100px;
+  min-width: 100px;
+}
+
+.reportFormActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  align-items: center;
+}
+
+.validationHint {
+  margin: 0;
+  font-size: 13px;
+  color: #991b1b;
+}
+
+.emptyState {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.combobox {
+  position: relative;
+}
+
+.comboboxInputRow {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.comboboxInputRow input {
+  padding-right: 36px;
+}
+
+.comboboxClear {
+  position: absolute;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: #6b7280;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.comboboxClear:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.comboboxList {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
+}
+
+.comboboxOption {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.comboboxOption:hover,
+.comboboxOptionActive {
+  background: #f0fdfa;
+  color: #115E65;
+}
+
+.comboboxEmpty {
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fadeIn {
+  animation: fadeIn 0.25s ease;
 }
 
 .modeDescription {
@@ -246,6 +608,48 @@
   opacity: 0.85;
 }
 
+.reportedMeetingBlock {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+
+  background-color: #fef3c7;
+  color: #92400e;
+
+  border: 1px dashed #d97706;
+  border-radius: 8px;
+  padding: 7px 8px;
+
+  box-sizing: border-box;
+  overflow: hidden;
+
+  z-index: 4;
+}
+
+.reportedMeetingBlockDraft {
+  background-color: transparent;
+  opacity: 0.75;
+  animation: draftPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes draftPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.reportSuccess {
+  margin: 0;
+  padding: 8px 0;
+  text-align: center;
+  font-weight: 600;
+  color: #115E65;
+}
+
 .nowLine {
   position: absolute;
   left: 0;
@@ -320,15 +724,15 @@
   color: #e8e8e8;
 }
 
-.dark .card,
-.dark .modeSwitch {
+.dark .card {
   background: #242424;
   border-color: #353535;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
 }
 
 .dark .form select,
-.dark .form input {
+.dark .form input,
+.dark .comboboxTrigger {
   background-color: #303030;
   color: #eeeeee;
   border-color: #404040;
@@ -339,20 +743,54 @@
   color: #777777;
 }
 
-.dark .modeButton {
-  color: #c8c8c8;
-}
-
-.dark .activeMode {
-  background: #115E65;
-  color: #ffffff;
-}
-
 .dark .modeDescription,
 .dark .statusRoom,
 .dark .statusDetails,
-.dark .hourLabel {
+.dark .hourLabel,
+.dark .emptyState {
   color: #a8a8a8;
+}
+
+.dark .fieldLabel {
+  color: #8a8a8a;
+}
+
+.dark .comboboxList {
+  background: #242424;
+  border-color: #353535;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+.dark .comboboxOption:hover,
+.dark .comboboxOptionActive {
+  background: #1c3d3f;
+  color: #5eead4;
+}
+
+.dark .comboboxEmpty {
+  color: #777777;
+}
+
+.dark .comboboxClear:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dark .nowButton {
+  border-color: #0f766e;
+  color: #5eead4;
+}
+
+.dark .nowButton:hover {
+  background-color: #0f766e;
+  color: #ffffff;
+}
+
+.dark .resetLink {
+  color: #5eead4;
+}
+
+.dark .reportSuccess {
+  color: #5eead4;
 }
 
 .dark .statusCard,
@@ -360,6 +798,14 @@
 .dark .roomCard {
   background: #242424;
   border-color: #353535;
+}
+
+.dark .roomCardAvailable {
+  border-left-color: #115E65;
+}
+
+.dark .roomCardBusy {
+  border-left-color: #b91c1c;
 }
 
 .dark .hourLine {
@@ -376,6 +822,62 @@
 
 .dark .meetingBlock {
   background-color: #0f766e;
+}
+
+.dark .reportedMeetingBlock {
+  background-color: rgba(217, 119, 6, 0.18);
+  color: #fbbf24;
+  border-color: #b45309;
+}
+
+.dark .reportDot {
+  color: #fbbf24;
+}
+
+.dark .reportTrigger {
+  border-color: #b45309;
+  color: #fbbf24;
+}
+
+.dark .reportTrigger:hover {
+  background: rgba(217, 119, 6, 0.12);
+}
+
+.dark .reportCard,
+.dark .reportFormCard {
+  background: rgba(217, 119, 6, 0.1);
+  border-color: #92400e;
+}
+
+.dark .reportBadge {
+  color: #fbbf24;
+}
+
+.dark .reportConfidence,
+.dark .reportCourse,
+.dark .reportMeta,
+.dark .reportNote,
+.dark .reportVotePrompt,
+.dark .reportFormTitle {
+  color: #fcd34d;
+}
+
+.dark .reportFormCard input,
+.dark .reportFormCard textarea {
+  background-color: #303030;
+  color: #eeeeee;
+  border-color: #404040;
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.18);
+}
+
+.dark .voteButton {
+  background: #242424;
+  border-color: #b45309;
+  color: #fbbf24;
+}
+
+.dark .voteButton:hover:not(:disabled) {
+  background: rgba(217, 119, 6, 0.15);
 }
 
 .dark .themeToggle {
