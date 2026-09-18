@@ -3,14 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./page.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { useKfupmClock } from "@/hooks/useKfupmClock";
 import { useSchedule } from "@/hooks/useSchedule";
 import { useRoomAvailability } from "@/hooks/useRoomAvailability";
 import { useRoomStatuses } from "@/hooks/useRoomStatuses";
-import { useDeviceId } from "@/hooks/useDeviceId";
-import { useRoomReports } from "@/hooks/useRoomReports";
+import { useDeviceId } from "@/features/reports/useDeviceId";
+import { useRoomReports } from "@/features/reports/useRoomReports";
 import {
   SCHEDULE_START,
   SCHEDULE_END,
@@ -19,8 +19,8 @@ import {
   getNowTimeWindow,
   type DayCode,
 } from "@/lib/time";
-import { buildReportedWeeklySchedule } from "@/lib/reportAvailability";
-import type { ReportVote } from "@/lib/reportTypes";
+import { buildReportedWeeklySchedule } from "@/features/reports/reportAvailability";
+import type { ReportVote } from "@/features/reports/reportTypes";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LiveIndicator } from "@/components/LiveIndicator";
 import { RoomFinder } from "@/components/RoomFinder";
@@ -40,6 +40,7 @@ export default function Home() {
   const [selectedDay, setSelectedDay] = useState<DayCode>(DEFAULT_DAY);
   const [startTime, setStartTime] = useState(DEFAULT_START);
   const [endTime, setEndTime] = useState(DEFAULT_END);
+  const [nowActive, setNowActive] = useState(false);
   const [votingReportId, setVotingReportId] = useState<string | null>(null);
 
   const { buildings, weeklySchedule } = useRoomAvailability(
@@ -73,17 +74,27 @@ export default function Home() {
 
   const todayCode = dayNameToDayCode(kfupmNow.day);
 
-  const handleBuildingChange = (building: string) => {
-    setSelectedBuilding(building);
-    setSelectedRoom("");
-  };
+  // While the "Now" toggle is on, Day/Start/End are locked (disabled in
+  // RoomFinder) and re-synced to the live KFUPM clock every time it ticks
+  // (useKfupmClock polls every 60s), so the window keeps tracking "now"
+  // for as long as the toggle stays on.
+  useEffect(() => {
+    if (!nowActive) return;
 
-  const handleNow = () => {
     if (todayCode) setSelectedDay(todayCode);
 
     const { start, end } = getNowTimeWindow(kfupmNow.hour, kfupmNow.minute);
     setStartTime(start);
     setEndTime(end);
+  }, [nowActive, kfupmNow, todayCode]);
+
+  const handleBuildingChange = (building: string) => {
+    setSelectedBuilding(building);
+    setSelectedRoom("");
+  };
+
+  const handleToggleNow = () => {
+    setNowActive(active => !active);
   };
 
   const handleReset = () => {
@@ -92,6 +103,7 @@ export default function Home() {
     setSelectedDay(DEFAULT_DAY);
     setStartTime(DEFAULT_START);
     setEndTime(DEFAULT_END);
+    setNowActive(false);
   };
 
   const handleVote = async (reportId: string, vote: ReportVote) => {
@@ -158,7 +170,7 @@ export default function Home() {
 
         <LiveIndicator loading={scheduleLoading} shortTerm={scheduleInfo.shortTerm} />
 
-        <p className={styles.modeDescription}>
+        <p className={styles.pageIntro}>
           Select a building, day, and time to see room availability, then
           click a room for its weekly schedule.
         </p>
@@ -174,7 +186,8 @@ export default function Home() {
           onStartTimeChange={setStartTime}
           endTime={endTime}
           onEndTimeChange={setEndTime}
-          onNow={handleNow}
+          nowActive={nowActive}
+          onToggleNow={handleToggleNow}
           onReset={handleReset}
           roomStatuses={roomStatuses}
           selectedRoom={selectedRoom}

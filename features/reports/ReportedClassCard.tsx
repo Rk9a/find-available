@@ -2,7 +2,7 @@
 
 import styles from "@/app/page.module.css";
 import { DAY_LABELS } from "@/lib/time";
-import type { ClassReport, ReportVote } from "@/lib/reportTypes";
+import type { ClassReport, ReportVote } from "./reportTypes";
 
 type ReportedClassCardProps = {
   report: ClassReport;
@@ -23,15 +23,12 @@ export function ReportedClassCard({
 }: ReportedClassCardProps) {
   const isOwnReport = report.reporterId === deviceId;
   const confidencePercent = Math.round(report.confidence * 100);
+  const confirmationLabel = `${report.confirms} confirmation${report.confirms === 1 ? "" : "s"}`;
+  const disputeLabel = report.denies > 0 ? `, ${report.denies} disputed` : "";
 
   return (
     <div className={styles.reportCard}>
-      <div className={styles.reportHeader}>
-        <span className={styles.reportBadge}>⚠︎ Reported</span>
-        <span className={styles.reportConfidence}>
-          {confidencePercent}% confidence
-        </span>
-      </div>
+      <span className={styles.reportBadge}>Reported</span>
 
       <p className={styles.reportCourse}>
         {report.subject} {report.courseNumber}
@@ -47,11 +44,20 @@ export function ReportedClassCard({
 
       {report.note && <p className={styles.reportNote}>&ldquo;{report.note}&rdquo;</p>}
 
+      <p className={styles.reportConfidence}>
+        {confidencePercent}% reliable
+        <span className={styles.reportConfidenceDetail}>
+          {" "}
+          ({confirmationLabel}
+          {disputeLabel})
+        </span>
+      </p>
+
       {isOwnReport ? (
         <p className={styles.reportMeta}>You reported this class.</p>
       ) : (
         <div className={styles.reportVotes}>
-          <span className={styles.reportVotePrompt}>Is this accurate?</span>
+          <span className={styles.reportVotePrompt}>Is this still happening?</span>
 
           <button
             type="button"

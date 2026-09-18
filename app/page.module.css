@@ -111,10 +111,21 @@
   text-decoration: underline;
 }
 
+.filterRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .filterRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 .timeRow {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
   gap: 12px;
 }
 
@@ -124,7 +135,9 @@
 }
 
 .nowButton {
-  padding: 12px 16px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
   border-radius: 10px;
   border: 1px solid #115E65;
   background-color: transparent;
@@ -139,6 +152,22 @@
 .nowButton:hover {
   background-color: #115E65;
   color: #ffffff;
+}
+
+.nowButtonActive {
+  background-color: #115E65;
+  color: #ffffff;
+}
+
+.nowButtonActive:hover {
+  background-color: #0c474c;
+}
+
+.form input:disabled,
+.comboboxTrigger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #f3f4f6;
 }
 
 .button {
@@ -206,9 +235,13 @@
 }
 
 .reportDot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
   margin-left: 6px;
-  font-size: 12px;
-  color: #b45309;
+  border-radius: 50%;
+  background-color: #d97706;
+  vertical-align: middle;
 }
 
 .reportTrigger {
@@ -238,15 +271,9 @@
   border: 1px solid #fde68a;
 }
 
-.reportHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-  gap: 8px;
-}
-
 .reportBadge {
+  display: block;
+  margin-bottom: 8px;
   font-size: 12px;
   font-weight: 700;
   color: #b45309;
@@ -255,8 +282,15 @@
 }
 
 .reportConfidence {
-  font-size: 12px;
+  margin: 8px 0 0;
+  font-size: 13px;
+  font-weight: 600;
   color: #92400e;
+}
+
+.reportConfidenceDetail {
+  font-weight: 400;
+  opacity: 0.85;
 }
 
 .reportCourse {
@@ -474,7 +508,7 @@
   animation: fadeIn 0.25s ease;
 }
 
-.modeDescription {
+.pageIntro {
   text-align: center;
   margin: 0 0 24px;
   font-size: 14px;
@@ -507,11 +541,6 @@
   font-size: 28px;
   font-weight: 700;
   color: #991b1b;
-}
-
-.statusDetails {
-  margin: 8px 0 0;
-  color: #6b7280;
 }
 
 .scheduleCard {
@@ -739,13 +768,16 @@
   box-shadow: 0 5px 16px rgba(0, 0, 0, 0.18);
 }
 
-.dark .form select:disabled {
+.dark .form select:disabled,
+.dark .form input:disabled,
+.dark .comboboxTrigger:disabled {
+  opacity: 0.5;
   color: #777777;
+  background-color: #262626;
 }
 
-.dark .modeDescription,
+.dark .pageIntro,
 .dark .statusRoom,
-.dark .statusDetails,
 .dark .hourLabel,
 .dark .emptyState {
   color: #a8a8a8;
@@ -783,6 +815,15 @@
 .dark .nowButton:hover {
   background-color: #0f766e;
   color: #ffffff;
+}
+
+.dark .nowButtonActive {
+  background-color: #0f766e;
+  color: #ffffff;
+}
+
+.dark .nowButtonActive:hover {
+  background-color: #0c5f58;
 }
 
 .dark .resetLink {
@@ -831,7 +872,7 @@
 }
 
 .dark .reportDot {
-  color: #fbbf24;
+  background-color: #fbbf24;
 }
 
 .dark .reportTrigger {

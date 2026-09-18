@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import styles from "@/app/page.module.css";
-import { type DayCode } from "@/lib/time";
-import type { DraftReport } from "@/lib/reportTypes";
-import { DaySelect } from "./DaySelect";
+import { REPORT_DAY_CODES, type DayCode } from "@/lib/time";
+import { DaySelect } from "@/components/DaySelect";
+import type { DraftReport } from "./reportTypes";
 
 type ReportClassFormProps = {
   building: string;
@@ -39,6 +39,7 @@ export function ReportClassForm({
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [merged, setMerged] = useState(false);
   const [error, setError] = useState("");
 
   const invalidRange = Number(endTime) <= Number(startTime);
@@ -77,12 +78,14 @@ export function ReportClassForm({
         }),
       });
 
+      const result = await response.json().catch(() => ({}));
+
       if (!response.ok) {
-        const result = await response.json().catch(() => ({}));
         throw new Error(result.error ?? "Failed to submit report");
       }
 
       onDraftChange(null);
+      setMerged(Boolean(result.merged));
       setSubmitted(true);
       setTimeout(onSubmitted, 1600);
     } catch (submitError) {
@@ -98,8 +101,9 @@ export function ReportClassForm({
     return (
       <div className={`${styles.reportFormCard} ${styles.fadeIn}`}>
         <p className={styles.reportSuccess}>
-          ✓ Thanks! Your report was submitted and is now visible to other
-          students.
+          {merged
+            ? "✓ Thanks for confirming! This matches an existing report, so it now counts as a confirmation."
+            : "✓ Thanks! Your report was submitted and is now visible to other students."}
         </p>
       </div>
     );
@@ -157,7 +161,7 @@ export function ReportClassForm({
 
       <label className={styles.fieldLabel}>
         Day
-        <DaySelect selectedDay={day} onChange={setDay} />
+        <DaySelect days={REPORT_DAY_CODES} selectedDay={day} onChange={setDay} />
       </label>
 
       <div className={styles.timeRow}>

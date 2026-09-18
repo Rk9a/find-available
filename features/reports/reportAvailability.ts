@@ -1,5 +1,5 @@
 import type { ClassReport } from "./reportTypes";
-import { dayCodeToWeekdayKey, weekDays, type DayCode, type WeekDay } from "./time";
+import { dayCodeToWeekdayKey, weekDays, type DayCode, type WeekDay } from "@/lib/time";
 
 export function reportOverlaps(
   report: ClassReport,

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "@/app/page.module.css";
+import { useDropdown } from "@/hooks/useDropdown";
 
 type BuildingComboboxProps = {
   buildings: string[];
@@ -9,37 +10,17 @@ type BuildingComboboxProps = {
   onChange: (building: string) => void;
 };
 
+function labelFor(building: string): string {
+  return building ? `Building ${building}` : "";
+}
+
 export function BuildingCombobox({
   buildings,
   selectedBuilding,
   onChange,
 }: BuildingComboboxProps) {
-  const [query, setQuery] = useState(
-    selectedBuilding ? `Building ${selectedBuilding}` : ""
-  );
-  const [open, setOpen] = useState(false);
-  const [highlighted, setHighlighted] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [query, setQuery] = useState(labelFor(selectedBuilding));
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    setQuery(selectedBuilding ? `Building ${selectedBuilding}` : "");
-  }, [selectedBuilding]);
-
-  useEffect(() => {
-    function handleOutsideClick(e: MouseEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
-        setOpen(false);
-        setQuery(selectedBuilding ? `Building ${selectedBuilding}` : "");
-      }
-    }
-
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, [selectedBuilding]);
 
   const normalizedQuery = query.trim().toLowerCase().replace(/^building\s*/, "");
   const filtered = normalizedQuery
@@ -48,36 +29,36 @@ export function BuildingCombobox({
 
   const selectBuilding = (building: string) => {
     onChange(building);
-    setQuery(`Building ${building}`);
+    setQuery(labelFor(building));
     setOpen(false);
   };
+
+  const {
+    open,
+    setOpen,
+    highlighted,
+    setHighlighted,
+    containerRef,
+    handleKeyDown,
+  } = useDropdown({
+    itemCount: filtered.length,
+    onSelect: index => {
+      if (filtered[index]) selectBuilding(filtered[index]);
+    },
+  });
+
+  // Whenever the dropdown closes — by picking an option, pressing Escape,
+  // or clicking outside — fall back to showing the current selection, so
+  // stray unsubmitted search text never lingers in the input.
+  useEffect(() => {
+    if (!open) setQuery(labelFor(selectedBuilding));
+  }, [open, selectedBuilding]);
 
   const clearSelection = () => {
     onChange("");
     setQuery("");
     setOpen(true);
     inputRef.current?.focus();
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!open) {
-      if (e.key === "ArrowDown" || e.key === "Enter") setOpen(true);
-      return;
-    }
-
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setHighlighted(i => Math.min(i + 1, filtered.length - 1));
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setHighlighted(i => Math.max(i - 1, 0));
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      if (filtered[highlighted]) selectBuilding(filtered[highlighted]);
-    } else if (e.key === "Escape") {
-      setOpen(false);
-      setQuery(selectedBuilding ? `Building ${selectedBuilding}` : "");
-    }
   };
 
   return (

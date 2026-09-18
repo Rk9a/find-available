@@ -20,12 +20,13 @@ Banner data can lag behind reality — a class can be happening in a room the sc
 
 Reports aren't reviewed by an admin. Instead:
 
-- A fresh report shows as a yellow "Reported" flag at 50% confidence.
-- Other students confirm or deny it; confidence rises or falls accordingly (capped below 100%, since it's never treated as ground truth like Banner).
+- A fresh report shows as a yellow "Reported" flag at 50% confidence, with a "Is this still happening?" Yes/No prompt shown to anyone else who looks at that same room/day/time.
+- Confirming or denying moves the reliability percentage shown under the report accordingly (capped below 100%, since it's never treated as ground truth like Banner).
+- If a report goes a while without a fresh confirmation, its reliability drifts back down toward 50% ("unproven") on its own — it only ever decays toward neutral, never back up, so a report that's already been denied can't quietly resurface just because nobody re-checked it.
 - Enough denials automatically retire a report — no manual moderation needed.
 - Reporting and voting are tied to an anonymous per-browser id, not an account.
 
-See `lib/reports.ts` for the confidence/retirement logic.
+See `features/reports/reports.ts` for the confidence/decay/retirement logic.
 
 ### Semester Detection
 
@@ -120,30 +121,34 @@ components/
 ├── BuildingCombobox.tsx
 ├── DaySelect.tsx
 ├── LiveIndicator.tsx
-├── ReportClassForm.tsx
-├── ReportedClassCard.tsx
 ├── RoomFinder.tsx
 ├── ThemeToggle.tsx
 └── WeeklyScheduleGrid.tsx
 
 hooks/
 ├── useDarkMode.ts
-├── useDeviceId.ts
+├── useDropdown.ts
 ├── useKfupmClock.ts
 ├── useRoomAvailability.ts
-├── useRoomReports.ts
 ├── useRoomStatuses.ts
 └── useSchedule.ts
 
 lib/
 ├── availability.ts
 ├── banner.ts
-├── redis.ts
-├── reportAvailability.ts
-├── reports.ts
-├── reportTypes.ts
 ├── time.ts
 └── types.ts
+
+features/
+└── reports/
+    ├── ReportClassForm.tsx
+    ├── ReportedClassCard.tsx
+    ├── redis.ts
+    ├── reportAvailability.ts
+    ├── reportTypes.ts
+    ├── reports.ts
+    └── useDeviceId.ts
+    └── useRoomReports.ts
 
 public/
 └── ...
@@ -153,16 +158,18 @@ public/
 
 `lib/availability.ts` and `lib/time.ts` contain the room/building availability calculations and shared time helpers, respectively.
 
-`lib/reports.ts` holds the crowd-sourced reporting logic (confidence scoring, auto-retirement, rate limiting) against Upstash Redis (`lib/redis.ts`); `lib/reportAvailability.ts` mirrors `lib/availability.ts`'s overlap checks for reported classes.
+`hooks/useDropdown.ts` holds the shared open/highlight/keyboard-nav/outside-click state behind both `BuildingCombobox` and `DaySelect`, so that interaction logic isn't duplicated between them.
+
+Reporting is self-contained under `features/reports/`: `reports.ts` holds the confidence scoring/auto-retirement/rate-limiting logic against Upstash Redis (`redis.ts`); `reportAvailability.ts` mirrors `lib/availability.ts`'s overlap checks for reported classes; `ReportClassForm.tsx` / `ReportedClassCard.tsx` are its UI, and `useDeviceId.ts` / `useRoomReports.ts` are its hooks.
 
 `app/api/schedule/route.ts` exposes the processed schedule to the frontend; `app/api/reports/` exposes report creation, listing, and voting.
 
-`app/page.tsx` composes `components/RoomFinder.tsx` out of the state/data hooks in `hooks/`:
+`app/page.tsx` composes `components/RoomFinder.tsx` out of the state/data hooks in `hooks/` and `features/reports/`:
 
 - `useSchedule` fetches and caches the schedule from `/api/schedule`.
 - `useKfupmClock` tracks the current time in KFUPM's timezone.
 - `useDarkMode` persists the selected theme and avoids a flash of the wrong theme on load.
-- `useRoomAvailability` / `useRoomStatuses` derive buildings, rooms, and per-room availability for the selected building/day/time.
+- `useRoomAvailability` / `useRoomStatuses` derive buildings and per-room availability for the selected building/day/time.
 - `useDeviceId` / `useRoomReports` back the reporting feature (anonymous device id, fetching/refetching reports for the selected building).
 
 `app/info/page.tsx` is the About page, with a link to report issues on GitHub.

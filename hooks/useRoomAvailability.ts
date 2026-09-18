@@ -2,12 +2,7 @@
 
 import { useMemo } from "react";
 import type { Section } from "@/lib/types";
-import {
-  getBuildings,
-  getRoomsForBuilding,
-  getRoomMeetings,
-  buildWeeklySchedule,
-} from "@/lib/availability";
+import { getBuildings, getRoomMeetings, buildWeeklySchedule } from "@/lib/availability";
 
 export function useRoomAvailability(
   sections: Section[],
@@ -15,11 +10,6 @@ export function useRoomAvailability(
   selectedRoom: string
 ) {
   const buildings = useMemo(() => getBuildings(sections), [sections]);
-
-  const rooms = useMemo(
-    () => getRoomsForBuilding(sections, selectedBuilding),
-    [sections, selectedBuilding]
-  );
 
   const roomMeetings = useMemo(
     () => getRoomMeetings(sections, selectedBuilding, selectedRoom),
@@ -31,5 +21,5 @@ export function useRoomAvailability(
     [roomMeetings]
   );
 
-  return { buildings, rooms, roomMeetings, weeklySchedule };
+  return { buildings, weeklySchedule };
 }

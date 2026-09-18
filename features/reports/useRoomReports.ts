@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { ClassReport } from "@/lib/reportTypes";
+import type { ClassReport } from "./reportTypes";
 
 export function useRoomReports(building: string, deviceId: string) {
   const [reports, setReports] = useState<ClassReport[]>([]);

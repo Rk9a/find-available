@@ -21,8 +21,9 @@ export const weekDays: WeekDay[] = [
   { key: "saturday", label: "SAT" },
 ];
 
-// Banner's building-search form uses single-letter day codes for Sun-Thu (KFUPM's work week).
-export type DayCode = "U" | "M" | "T" | "W" | "R";
+// Single-letter day codes, following Banner's Sun-Thu convention (U/M/T/W/R)
+// extended with F/S so the room search can also browse Fri/Sat.
+export type DayCode = "U" | "M" | "T" | "W" | "R" | "F" | "S";
 
 const DAY_CODE_TO_KEY: Record<DayCode, WeekdayKey> = {
   U: "sunday",
@@ -30,6 +31,8 @@ const DAY_CODE_TO_KEY: Record<DayCode, WeekdayKey> = {
   T: "tuesday",
   W: "wednesday",
   R: "thursday",
+  F: "friday",
+  S: "saturday",
 };
 
 const WEEKDAY_NAME_TO_DAY_CODE: Partial<Record<string, DayCode>> = {
@@ -38,6 +41,8 @@ const WEEKDAY_NAME_TO_DAY_CODE: Partial<Record<string, DayCode>> = {
   Tuesday: "T",
   Wednesday: "W",
   Thursday: "R",
+  Friday: "F",
+  Saturday: "S",
 };
 
 export function meetsOnDayCode(
@@ -57,9 +62,16 @@ export const DAY_LABELS: Record<DayCode, string> = {
   T: "Tue",
   W: "Wed",
   R: "Thu",
+  F: "Fri",
+  S: "Sat",
 };
 
-// KFUPM has no classes Fri/Sat, so those weekday names have no Banner day code.
+// KFUPM has no Banner classes Fri/Sat, so the class-report form (which
+// describes a real recurring section) only offers Sun-Thu. The room search
+// covers the full week since browsing an always-empty weekend is harmless.
+export const SEARCH_DAY_CODES: DayCode[] = ["U", "M", "T", "W", "R", "F", "S"];
+export const REPORT_DAY_CODES: DayCode[] = ["U", "M", "T", "W", "R"];
+
 export function dayNameToDayCode(name?: string): DayCode | undefined {
   return name ? WEEKDAY_NAME_TO_DAY_CODE[name] : undefined;
 }

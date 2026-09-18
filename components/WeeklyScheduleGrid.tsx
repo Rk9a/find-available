@@ -2,7 +2,7 @@
 
 import styles from "@/app/page.module.css";
 import type { DaySchedule } from "@/lib/availability";
-import type { ReportedDaySchedule } from "@/lib/reportAvailability";
+import type { ReportedDaySchedule } from "@/features/reports/reportAvailability";
 import {
   SCHEDULE_START,
   SCHEDULE_DURATION,
@@ -111,8 +111,10 @@ export function WeeklyScheduleGrid({
                       style={{ top: `${top}%`, height: `${height}%` }}
                     >
                       <p className={styles.meetingCourse}>
-                        ⚠︎ {report.subject} {report.courseNumber}
+                        {report.subject} {report.courseNumber}
                         {report.section ? `-${report.section}` : ""}
+                        {" · "}
+                        {Math.round(report.confidence * 100)}%
                         {isDraft ? " (preview)" : ""}
                       </p>
 

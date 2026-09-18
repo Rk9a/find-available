@@ -2,8 +2,8 @@ import {
   ReportNotFoundError,
   SelfVoteError,
   voteOnReport,
-} from "@/lib/reports";
-import type { ReportVote } from "@/lib/reportTypes";
+} from "@/features/reports/reports";
+import type { ReportVote } from "@/features/reports/reportTypes";
 
 function isValidVote(body: unknown): body is { deviceId: string; vote: ReportVote } {
   if (!body || typeof body !== "object") return false;

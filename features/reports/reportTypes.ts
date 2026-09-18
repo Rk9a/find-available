@@ -1,4 +1,4 @@
-import type { DayCode } from "./time";
+import type { DayCode } from "@/lib/time";
 
 export type ReportVote = "confirm" | "deny";
 
@@ -16,6 +16,7 @@ export type ClassReport = {
   note?: string;
   reporterId: string;
   createdAt: number;
+  lastActivityAt: number;
   confirms: number;
   denies: number;
   confidence: number;

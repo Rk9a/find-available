@@ -2,19 +2,72 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "@/app/page.module.css";
-import { DAY_LABELS, dayCodeToWeekdayKey, type DayCode } from "@/lib/time";
+import { DAY_LABELS, SEARCH_DAY_CODES, dayCodeToWeekdayKey, type DayCode } from "@/lib/time";
 import type { RoomStatus, DaySchedule } from "@/lib/availability";
-import type { ClassReport, DraftReport, ReportVote } from "@/lib/reportTypes";
+import type { ClassReport, DraftReport, ReportVote } from "@/features/reports/reportTypes";
 import {
   reportOverlaps,
   roomsWithOverlappingReports,
   type ReportedDaySchedule,
-} from "@/lib/reportAvailability";
+} from "@/features/reports/reportAvailability";
+import { ReportedClassCard } from "@/features/reports/ReportedClassCard";
+import { ReportClassForm } from "@/features/reports/ReportClassForm";
 import { BuildingCombobox } from "./BuildingCombobox";
 import { DaySelect } from "./DaySelect";
 import { WeeklyScheduleGrid } from "./WeeklyScheduleGrid";
-import { ReportedClassCard } from "./ReportedClassCard";
-import { ReportClassForm } from "./ReportClassForm";
+
+type RoomCardSectionProps = {
+  title: string;
+  rooms: RoomStatus[];
+  variantClass: string;
+  emptyMessage: string;
+  selectedRoom: string;
+  reportedRooms: Set<string>;
+  onSelect: (room: string) => void;
+};
+
+function RoomCardSection({
+  title,
+  rooms,
+  variantClass,
+  emptyMessage,
+  selectedRoom,
+  reportedRooms,
+  onSelect,
+}: RoomCardSectionProps) {
+  return (
+    <>
+      <h2 className={styles.heading}>
+        {title} ({rooms.length})
+      </h2>
+      {rooms.length === 0 ? (
+        <p className={styles.emptyState}>{emptyMessage}</p>
+      ) : (
+        <div className={`${styles.grid} ${styles.fadeIn}`}>
+          {rooms.map(({ room }) => (
+            <button
+              key={room}
+              type="button"
+              onClick={() => onSelect(room)}
+              className={`${styles.roomCard} ${variantClass} ${
+                room === selectedRoom ? styles.roomCardSelected : ""
+              }`}
+            >
+              Room {room}
+              {reportedRooms.has(room) && (
+                <span
+                  className={styles.reportDot}
+                  title="Reported by a student"
+                  aria-label="Reported by a student"
+                />
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
 
 type RoomFinderProps = {
   buildings: string[];
@@ -27,7 +80,8 @@ type RoomFinderProps = {
   onStartTimeChange: (time: string) => void;
   endTime: string;
   onEndTimeChange: (time: string) => void;
-  onNow: () => void;
+  nowActive: boolean;
+  onToggleNow: () => void;
   onReset: () => void;
   roomStatuses: RoomStatus[];
   selectedRoom: string;
@@ -55,7 +109,8 @@ export function RoomFinder({
   onStartTimeChange,
   endTime,
   onEndTimeChange,
-  onNow,
+  nowActive,
+  onToggleNow,
   onReset,
   roomStatuses,
   selectedRoom,
@@ -126,6 +181,7 @@ export function RoomFinder({
         section: draftReport.section.trim() || undefined,
         reporterId: deviceId,
         createdAt: 0,
+        lastActivityAt: 0,
         confirms: 0,
         denies: 0,
         confidence: 0.5,
@@ -160,16 +216,18 @@ export function RoomFinder({
           />
         </label>
 
-        <label className={styles.fieldLabel}>
-          Day
-          <DaySelect
-            selectedDay={selectedDay}
-            onChange={onDayChange}
-            todayCode={todayCode}
-          />
-        </label>
+        <div className={styles.filterRow}>
+          <label className={styles.fieldLabel}>
+            Day
+            <DaySelect
+              days={SEARCH_DAY_CODES}
+              selectedDay={selectedDay}
+              onChange={onDayChange}
+              todayCode={todayCode}
+              disabled={nowActive}
+            />
+          </label>
 
-        <div className={styles.timeRow}>
           <label className={styles.fieldLabel}>
             Start
             <input
@@ -177,6 +235,7 @@ export function RoomFinder({
               step="1800"
               value={`${startTime.slice(0, 2)}:${startTime.slice(2)}`}
               onChange={e => onStartTimeChange(e.target.value.replace(":", ""))}
+              disabled={nowActive}
             />
           </label>
 
@@ -187,17 +246,26 @@ export function RoomFinder({
               step="1800"
               value={`${endTime.slice(0, 2)}:${endTime.slice(2)}`}
               onChange={e => onEndTimeChange(e.target.value.replace(":", ""))}
+              disabled={nowActive}
             />
           </label>
 
-          <button
-            type="button"
-            className={styles.nowButton}
-            onClick={onNow}
-            title="Check availability right now"
-          >
-            Now
-          </button>
+          <div className={styles.fieldLabel}>
+            <span aria-hidden="true">&nbsp;</span>
+            <button
+              type="button"
+              className={`${styles.nowButton} ${nowActive ? styles.nowButtonActive : ""}`}
+              onClick={onToggleNow}
+              aria-pressed={nowActive}
+              title={
+                nowActive
+                  ? "Showing live availability — click to unlock day/time"
+                  : "Lock to live availability right now"
+              }
+            >
+              Now
+            </button>
+          </div>
         </div>
 
         {invalidRange && (
@@ -209,55 +277,25 @@ export function RoomFinder({
 
       {selectedBuilding && !invalidRange && (
         <>
-          <h2 className={styles.heading}>Available ({availableRooms.length})</h2>
-          {availableRooms.length === 0 ? (
-            <p className={styles.emptyState}>No rooms available for this time.</p>
-          ) : (
-            <div className={`${styles.grid} ${styles.fadeIn}`}>
-              {availableRooms.map(({ room }) => (
-                <button
-                  key={room}
-                  type="button"
-                  onClick={() => toggleRoom(room)}
-                  className={`${styles.roomCard} ${styles.roomCardAvailable} ${
-                    room === selectedRoom ? styles.roomCardSelected : ""
-                  }`}
-                >
-                  Room {room}
-                  {reportedRoomsInWindow.has(room) && (
-                    <span className={styles.reportDot} title="Reported by a student">
-                      ⚠︎
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
+          <RoomCardSection
+            title="Available"
+            rooms={availableRooms}
+            variantClass={styles.roomCardAvailable}
+            emptyMessage="No rooms available for this time."
+            selectedRoom={selectedRoom}
+            reportedRooms={reportedRoomsInWindow}
+            onSelect={toggleRoom}
+          />
 
-          <h2 className={styles.heading}>Busy ({busyRooms.length})</h2>
-          {busyRooms.length === 0 ? (
-            <p className={styles.emptyState}>All rooms are free at this time.</p>
-          ) : (
-            <div className={`${styles.grid} ${styles.fadeIn}`}>
-              {busyRooms.map(({ room }) => (
-                <button
-                  key={room}
-                  type="button"
-                  onClick={() => toggleRoom(room)}
-                  className={`${styles.roomCard} ${styles.roomCardBusy} ${
-                    room === selectedRoom ? styles.roomCardSelected : ""
-                  }`}
-                >
-                  Room {room}
-                  {reportedRoomsInWindow.has(room) && (
-                    <span className={styles.reportDot} title="Reported by a student">
-                      ⚠︎
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
+          <RoomCardSection
+            title="Busy"
+            rooms={busyRooms}
+            variantClass={styles.roomCardBusy}
+            emptyMessage="All rooms are free at this time."
+            selectedRoom={selectedRoom}
+            reportedRooms={reportedRoomsInWindow}
+            onSelect={toggleRoom}
+          />
         </>
       )}
 

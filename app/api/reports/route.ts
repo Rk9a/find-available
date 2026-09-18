@@ -1,9 +1,11 @@
 import { getCurrentSchedule } from "@/lib/banner";
-import { createReport, getReportsForBuilding, RateLimitError } from "@/lib/reports";
-import type { CreateReportInput } from "@/lib/reportTypes";
-import type { DayCode } from "@/lib/time";
-
-const VALID_DAY_CODES: DayCode[] = ["U", "M", "T", "W", "R"];
+import { REPORT_DAY_CODES, type DayCode } from "@/lib/time";
+import {
+  createReport,
+  getReportsForBuilding,
+  RateLimitError,
+} from "@/features/reports/reports";
+import type { CreateReportInput } from "@/features/reports/reportTypes";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -44,7 +46,7 @@ function isValidInput(body: unknown): body is CreateReportInput {
     typeof input.room === "string" &&
     input.room.length > 0 &&
     typeof input.day === "string" &&
-    VALID_DAY_CODES.includes(input.day as DayCode) &&
+    REPORT_DAY_CODES.includes(input.day as DayCode) &&
     typeof input.startTime === "string" &&
     /^\d{4}$/.test(input.startTime) &&
     typeof input.endTime === "string" &&
@@ -76,9 +78,9 @@ export async function POST(request: Request) {
   }
 
   try {
-    const report = await createReport(body);
+    const { report, merged } = await createReport(body);
 
-    return Response.json({ report }, { status: 201 });
+    return Response.json({ report, merged }, { status: merged ? 200 : 201 });
   } catch (error) {
     if (error instanceof RateLimitError) {
       return Response.json({ error: error.message }, { status: 429 });
