@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import styles from "./page.module.css";
 import { useEffect, useState } from "react";
+import { Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { useKfupmClock } from "@/hooks/useKfupmClock";
 import { useSchedule } from "@/hooks/useSchedule";
@@ -127,82 +129,96 @@ export default function Home() {
   };
 
   return (
-    <div className={`${styles.container} ${darkMode ? styles.dark : ""}`}>
-      <div className={styles.wrapper}>
-        <ThemeToggle darkMode={darkMode} onToggle={toggleDarkMode} />
+    <div className="flex min-h-screen justify-center px-4 py-6 sm:px-5 sm:py-8">
+      <div className="w-full max-w-[1000px]">
+        <header className="mb-4 grid grid-cols-[auto_1fr_auto] items-start">
+          <Button
+            asChild
+            variant="outline"
+            size="icon-lg"
+            className="rounded-full bg-card shadow-sm dark:bg-card"
+          >
+            <Link href="/info" aria-label="About Find Available" title="About">
+              <Info />
+            </Link>
+          </Button>
 
-        <Link
-          href="/info"
-          className={styles.infoButton}
-          aria-label="About Find Available"
-          title="About"
-        >
-          i
-        </Link>
+          <div className="flex justify-center">
+            <Image
+              src="/logo4.svg"
+              alt="Find Available Logo"
+              width={0}
+              height={0}
+              sizes="100vw"
+              className="dark:brightness-[1.45] dark:contrast-[1.2]"
+              style={{
+                width: "200px",
+                height: "auto",
+              }}
+              priority
+            />
+          </div>
 
-        <div className={styles.logoContainer}>
-          <Image
-            src="/logo4.svg"
-            alt="Find Available Logo"
-            width={0}
-            height={0}
-            sizes="100vw"
-            style={{
-              width: "200px",
-              height: "auto",
-            }}
-            priority
-          />
+          <ThemeToggle darkMode={darkMode} onToggle={toggleDarkMode} />
+        </header>
+
+        <div className="flex justify-center">
+          <LiveIndicator loading={scheduleLoading} shortTerm={scheduleInfo.shortTerm} />
         </div>
 
-        {scheduleLoading && (
-          <div className={styles.loadingSkeleton}>
-            <div className={styles.skeletonMode} />
-
-            <div className={styles.skeletonText} />
-
-            <div className={styles.skeletonCard}>
-              <div className={styles.skeletonInput} />
-              <div className={styles.skeletonInput} />
-            </div>
-          </div>
-        )}
-
-        <LiveIndicator loading={scheduleLoading} shortTerm={scheduleInfo.shortTerm} />
-
-        <p className={styles.pageIntro}>
+        <p className="mb-6 text-center text-sm text-muted-foreground">
           Select a building, day, and time to see room availability, then
           click a room for its weekly schedule.
         </p>
 
-        <RoomFinder
-          buildings={buildings}
-          selectedBuilding={selectedBuilding}
-          onBuildingChange={handleBuildingChange}
-          selectedDay={selectedDay}
-          onDayChange={setSelectedDay}
-          todayCode={todayCode}
-          startTime={startTime}
-          onStartTimeChange={setStartTime}
-          endTime={endTime}
-          onEndTimeChange={setEndTime}
-          nowActive={nowActive}
-          onToggleNow={handleToggleNow}
-          onReset={handleReset}
-          roomStatuses={roomStatuses}
-          selectedRoom={selectedRoom}
-          onRoomChange={setSelectedRoom}
-          weeklySchedule={weeklySchedule}
-          showNowPointer={showNowPointer}
-          nowPosition={nowPosition}
-          currentDay={kfupmNow.day}
-          reports={reports}
-          reportedSchedule={reportedSchedule}
-          deviceId={deviceId}
-          onVote={handleVote}
-          votingReportId={votingReportId}
-          onReportSubmitted={refetchReports}
-        />
+        {scheduleLoading ? (
+          <div
+            className="mb-8 flex flex-col gap-4 rounded-xl bg-card p-6 shadow-lg ring-1 ring-border"
+            aria-busy="true"
+            aria-label="Loading"
+          >
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-6 w-32" />
+              <Skeleton className="h-7 w-16" />
+            </div>
+            <Skeleton className="h-10" />
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <Skeleton className="h-10" />
+              <Skeleton className="h-10" />
+              <Skeleton className="h-10" />
+              <Skeleton className="h-10" />
+            </div>
+          </div>
+        ) : (
+          <RoomFinder
+            buildings={buildings}
+            selectedBuilding={selectedBuilding}
+            onBuildingChange={handleBuildingChange}
+            selectedDay={selectedDay}
+            onDayChange={setSelectedDay}
+            todayCode={todayCode}
+            startTime={startTime}
+            onStartTimeChange={setStartTime}
+            endTime={endTime}
+            onEndTimeChange={setEndTime}
+            nowActive={nowActive}
+            onToggleNow={handleToggleNow}
+            onReset={handleReset}
+            roomStatuses={roomStatuses}
+            selectedRoom={selectedRoom}
+            onRoomChange={setSelectedRoom}
+            weeklySchedule={weeklySchedule}
+            showNowPointer={showNowPointer}
+            nowPosition={nowPosition}
+            currentDay={kfupmNow.day}
+            reports={reports}
+            reportedSchedule={reportedSchedule}
+            deviceId={deviceId}
+            onVote={handleVote}
+            votingReportId={votingReportId}
+            onReportSubmitted={refetchReports}
+          />
+        )}
       </div>
     </div>
   );

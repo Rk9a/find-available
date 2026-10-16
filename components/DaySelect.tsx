@@ -1,8 +1,10 @@
 "use client";
 
-import styles from "@/app/page.module.css";
+import { Check, ChevronDown } from "lucide-react";
 import { DAY_LABELS, type DayCode } from "@/lib/time";
 import { useDropdown } from "@/hooks/useDropdown";
+import { Button } from "@/components/ui/button";
+import { dropdownListClass, dropdownOptionClass } from "./dropdownStyles";
 
 type DaySelectProps = {
   days: DayCode[];
@@ -39,42 +41,44 @@ export function DaySelect({
   });
 
   return (
-    <div className={styles.combobox} ref={containerRef}>
-      <div className={styles.comboboxInputRow}>
-        <button
-          type="button"
-          role="combobox"
-          aria-expanded={open}
-          aria-haspopup="listbox"
-          className={styles.comboboxTrigger}
-          disabled={disabled}
-          onClick={() => setOpen(o => !o)}
-          onKeyDown={handleKeyDown}
-        >
+    <div className="relative" ref={containerRef}>
+      <Button
+        type="button"
+        variant="outline"
+        role="combobox"
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        className="h-10 w-full justify-between border-input bg-surface px-3 font-normal dark:bg-surface"
+        disabled={disabled}
+        onClick={() => setOpen(o => !o)}
+        onKeyDown={handleKeyDown}
+      >
+        <span className="truncate">
           {DAY_LABELS[selectedDay]}
           {selectedDay === todayCode ? " (Today)" : ""}
-        </button>
-        <span className={styles.comboboxCaret}>▾</span>
-      </div>
+        </span>
+        <ChevronDown className="text-muted-foreground" />
+      </Button>
 
       {open && (
-        <ul className={styles.comboboxList} role="listbox">
+        <ul className={dropdownListClass} role="listbox">
           {days.map((code, i) => (
             <li
               key={code}
               role="option"
               aria-selected={code === selectedDay}
-              className={`${styles.comboboxOption} ${
-                i === highlighted ? styles.comboboxOptionActive : ""
-              }`}
+              className={dropdownOptionClass(i === highlighted)}
               onMouseEnter={() => setHighlighted(i)}
               onMouseDown={e => {
                 e.preventDefault();
                 selectDay(code);
               }}
             >
-              {DAY_LABELS[code]}
-              {code === todayCode ? " (Today)" : ""}
+              <span>
+                {DAY_LABELS[code]}
+                {code === todayCode ? " (Today)" : ""}
+              </span>
+              {code === selectedDay && <Check className="size-4" />}
             </li>
           ))}
         </ul>

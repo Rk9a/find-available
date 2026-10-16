@@ -3,9 +3,12 @@ import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Separator } from "@/components/ui/separator";
 
 const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
@@ -19,25 +22,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={jetbrains.className}>
-        <div
-          style={{
-            minHeight: "100vh",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <main style={{ flex: 1 }}>
-            {children}
-          </main>
+    <html lang="en" className={jetbrains.variable}>
+      <body className="antialiased">
+        <TooltipProvider>
+          <div className="flex min-h-screen flex-col">
+            <main className="flex-1">{children}</main>
 
-          <footer className="site-footer">
-            {new Date().getFullYear()} • Designed by Rayan
-            {" • "}
-            <Link href="/info">About</Link>
-          </footer>
-        </div>
+            <Separator />
+            <footer className="bg-card py-3 text-center text-xs tracking-wider text-muted-foreground">
+              {new Date().getFullYear()} • Designed by Rayan
+              {" • "}
+              <Link
+                href="/info"
+                className="underline-offset-4 hover:text-foreground hover:underline"
+              >
+                About
+              </Link>
+            </footer>
+          </div>
+        </TooltipProvider>
         <Analytics />
       </body>
     </html>

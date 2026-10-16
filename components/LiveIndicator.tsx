@@ -1,6 +1,7 @@
 "use client";
 
-import styles from "@/app/page.module.css";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 type LiveIndicatorProps = {
   loading: boolean;
@@ -9,12 +10,20 @@ type LiveIndicatorProps = {
 
 export function LiveIndicator({ loading, shortTerm }: LiveIndicatorProps) {
   return (
-    <div
-      className={`${styles.liveIndicator} ${loading ? styles.loadingIndicator : ""}`}
+    <Badge
+      variant="outline"
+      className="mx-auto mb-4 flex h-8 gap-2.5 bg-card px-3.5 text-sm font-semibold text-muted-foreground shadow-xs"
     >
-      <span className={loading ? styles.loadingDot : styles.liveDot} />
+      <span
+        className={cn(
+          "size-2 rounded-full",
+          loading
+            ? "bg-loading animate-[loadingGlow_1.2s_ease-in-out_infinite]"
+            : "bg-live animate-[liveGlow_2s_ease-in-out_infinite]"
+        )}
+      />
 
       {loading ? "Loading Semester ···" : `Live · ${shortTerm}`}
-    </div>
+    </Badge>
   );
 }

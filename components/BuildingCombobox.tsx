@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import styles from "@/app/page.module.css";
+import { Search, X } from "lucide-react";
 import { useDropdown } from "@/hooks/useDropdown";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { dropdownListClass, dropdownOptionClass } from "./dropdownStyles";
 
 type BuildingComboboxProps = {
   buildings: string[];
@@ -62,9 +65,10 @@ export function BuildingCombobox({
   };
 
   return (
-    <div className={styles.combobox} ref={containerRef}>
-      <div className={styles.comboboxInputRow}>
-        <input
+    <div className="relative" ref={containerRef}>
+      <div className="relative flex items-center">
+        <Search className="pointer-events-none absolute left-3 size-4 text-muted-foreground" />
+        <Input
           ref={inputRef}
           type="text"
           role="combobox"
@@ -73,6 +77,7 @@ export function BuildingCombobox({
           autoComplete="off"
           placeholder="Search building (e.g. 22, 24)"
           value={query}
+          className="h-10 bg-surface pr-10 pl-9 dark:bg-surface"
           onChange={e => {
             setQuery(e.target.value);
             setOpen(true);
@@ -83,28 +88,30 @@ export function BuildingCombobox({
           onKeyDown={handleKeyDown}
         />
         {selectedBuilding && (
-          <button
+          <Button
             type="button"
-            className={styles.comboboxClear}
+            variant="ghost"
+            size="icon-sm"
+            className="absolute right-1.5 rounded-full text-muted-foreground"
             onClick={clearSelection}
             aria-label="Clear building"
           >
-            ×
-          </button>
+            <X />
+          </Button>
         )}
       </div>
 
       {open && (
-        <ul className={styles.comboboxList}>
+        <ul className={dropdownListClass}>
           {filtered.length === 0 && (
-            <li className={styles.comboboxEmpty}>No matching buildings</li>
+            <li className="px-2.5 py-6 text-center text-sm text-muted-foreground">
+              No matching buildings
+            </li>
           )}
           {filtered.map((b, i) => (
             <li
               key={b}
-              className={`${styles.comboboxOption} ${
-                i === highlighted ? styles.comboboxOptionActive : ""
-              }`}
+              className={dropdownOptionClass(i === highlighted)}
               onMouseEnter={() => setHighlighted(i)}
               onMouseDown={e => {
                 e.preventDefault();

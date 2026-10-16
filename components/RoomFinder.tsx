@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import styles from "@/app/page.module.css";
+import { Flag, RotateCcw } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { DAY_LABELS, SEARCH_DAY_CODES, dayCodeToWeekdayKey, type DayCode } from "@/lib/time";
 import type { RoomStatus, DaySchedule } from "@/lib/availability";
 import type { ClassReport, DraftReport, ReportVote } from "@/features/reports/reportTypes";
@@ -15,6 +24,11 @@ import { ReportClassForm } from "@/features/reports/ReportClassForm";
 import { BuildingCombobox } from "./BuildingCombobox";
 import { DaySelect } from "./DaySelect";
 import { WeeklyScheduleGrid } from "./WeeklyScheduleGrid";
+
+const fieldLabelClass =
+  "text-xs font-semibold tracking-wide text-muted-foreground uppercase";
+
+const timeInputClass = "h-10 bg-surface dark:bg-surface";
 
 type RoomCardSectionProps = {
   title: string;
@@ -36,36 +50,46 @@ function RoomCardSection({
   onSelect,
 }: RoomCardSectionProps) {
   return (
-    <>
-      <h2 className={styles.heading}>
-        {title} ({rooms.length})
-      </h2>
+    <section className="mt-6">
+      <div className="mb-3 flex items-center gap-2">
+        <h2 className="text-sm font-semibold">{title}</h2>
+        <Badge variant="secondary">{rooms.length}</Badge>
+      </div>
       {rooms.length === 0 ? (
-        <p className={styles.emptyState}>{emptyMessage}</p>
+        <p className="text-sm text-muted-foreground">{emptyMessage}</p>
       ) : (
-        <div className={`${styles.grid} ${styles.fadeIn}`}>
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-3 animate-in fade-in-0 slide-in-from-bottom-1 duration-300">
           {rooms.map(({ room }) => (
-            <button
+            <Button
               key={room}
               type="button"
+              variant="outline"
               onClick={() => onSelect(room)}
-              className={`${styles.roomCard} ${variantClass} ${
-                room === selectedRoom ? styles.roomCardSelected : ""
-              }`}
+              aria-pressed={room === selectedRoom}
+              className={cn(
+                "h-12 gap-2 border-l-4 bg-surface shadow-xs hover:shadow-md dark:bg-surface",
+                variantClass,
+                room === selectedRoom &&
+                  "ring-2 ring-primary ring-offset-2 ring-offset-card"
+              )}
             >
               Room {room}
               {reportedRooms.has(room) && (
-                <span
-                  className={styles.reportDot}
-                  title="Reported by a student"
-                  aria-label="Reported by a student"
-                />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span
+                      className="size-2 rounded-full bg-reported"
+                      aria-label="Reported by a student"
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>Reported by a student</TooltipContent>
+                </Tooltip>
               )}
-            </button>
+            </Button>
           ))}
         </div>
       )}
-    </>
+    </section>
   );
 }
 
@@ -198,172 +222,213 @@ export function RoomFinder({
     : reportedSchedule;
 
   return (
-    <div className={styles.card}>
-      <div className={styles.filterHeader}>
-        <span className={styles.heading}>Find a room</span>
-        <button type="button" className={styles.resetLink} onClick={onReset}>
+    <Card className="mb-8 gap-0 overflow-visible py-6 shadow-lg ring-border">
+      <CardHeader className="flex items-center justify-between px-6">
+        <CardTitle className="text-lg font-semibold">Find a room</CardTitle>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="text-primary dark:text-accent-foreground"
+          onClick={onReset}
+        >
+          <RotateCcw />
           Reset
-        </button>
-      </div>
+        </Button>
+      </CardHeader>
 
-      <div className={styles.form}>
-        <label className={styles.fieldLabel}>
-          Building
-          <BuildingCombobox
-            buildings={buildings}
-            selectedBuilding={selectedBuilding}
-            onChange={onBuildingChange}
-          />
-        </label>
-
-        <div className={styles.filterRow}>
-          <label className={styles.fieldLabel}>
-            Day
-            <DaySelect
-              days={SEARCH_DAY_CODES}
-              selectedDay={selectedDay}
-              onChange={onDayChange}
-              todayCode={todayCode}
-              disabled={nowActive}
+      <CardContent className="mt-4 px-6">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <Label className={fieldLabelClass}>Building</Label>
+            <BuildingCombobox
+              buildings={buildings}
+              selectedBuilding={selectedBuilding}
+              onChange={onBuildingChange}
             />
-          </label>
-
-          <label className={styles.fieldLabel}>
-            Start
-            <input
-              type="time"
-              step="1800"
-              value={`${startTime.slice(0, 2)}:${startTime.slice(2)}`}
-              onChange={e => onStartTimeChange(e.target.value.replace(":", ""))}
-              disabled={nowActive}
-            />
-          </label>
-
-          <label className={styles.fieldLabel}>
-            End
-            <input
-              type="time"
-              step="1800"
-              value={`${endTime.slice(0, 2)}:${endTime.slice(2)}`}
-              onChange={e => onEndTimeChange(e.target.value.replace(":", ""))}
-              disabled={nowActive}
-            />
-          </label>
-
-          <div className={styles.fieldLabel}>
-            <span aria-hidden="true">&nbsp;</span>
-            <button
-              type="button"
-              className={`${styles.nowButton} ${nowActive ? styles.nowButtonActive : ""}`}
-              onClick={onToggleNow}
-              aria-pressed={nowActive}
-              title={
-                nowActive
-                  ? "Showing live availability — click to unlock day/time"
-                  : "Lock to live availability right now"
-              }
-            >
-              Now
-            </button>
-          </div>
-        </div>
-
-        {invalidRange && (
-          <p className={styles.validationHint}>
-            End time must be after start time.
-          </p>
-        )}
-      </div>
-
-      {selectedBuilding && !invalidRange && (
-        <>
-          <RoomCardSection
-            title="Available"
-            rooms={availableRooms}
-            variantClass={styles.roomCardAvailable}
-            emptyMessage="No rooms available for this time."
-            selectedRoom={selectedRoom}
-            reportedRooms={reportedRoomsInWindow}
-            onSelect={toggleRoom}
-          />
-
-          <RoomCardSection
-            title="Busy"
-            rooms={busyRooms}
-            variantClass={styles.roomCardBusy}
-            emptyMessage="All rooms are free at this time."
-            selectedRoom={selectedRoom}
-            reportedRooms={reportedRoomsInWindow}
-            onSelect={toggleRoom}
-          />
-        </>
-      )}
-
-      {selectedRoom && selectedStatus && (
-        <div ref={detailRef} className={styles.fadeIn}>
-          <div className={styles.statusCard}>
-            <p className={styles.statusRoom}>
-              Room {selectedRoom} · {DAY_LABELS[selectedDay]}{" "}
-              {startTime.slice(0, 2)}:{startTime.slice(2)}
-              {" – "}
-              {endTime.slice(0, 2)}:{endTime.slice(2)}
-            </p>
-
-            <p
-              className={
-                selectedStatus.available
-                  ? styles.statusAvailable
-                  : styles.statusBusy
-              }
-            >
-              {selectedStatus.available ? "AVAILABLE" : "BUSY"}
-            </p>
           </div>
 
-          {matchingReports.map(report => (
-            <ReportedClassCard
-              key={report.id}
-              report={report}
-              deviceId={deviceId}
-              onVote={onVote}
-              voting={votingReportId === report.id}
-            />
-          ))}
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="flex flex-col gap-2">
+              <Label className={fieldLabelClass}>Day</Label>
+              <DaySelect
+                days={SEARCH_DAY_CODES}
+                selectedDay={selectedDay}
+                onChange={onDayChange}
+                todayCode={todayCode}
+                disabled={nowActive}
+              />
+            </div>
 
-          {showReportForm ? (
-            <ReportClassForm
-              building={selectedBuilding}
-              room={selectedRoom}
-              defaultDay={selectedDay}
-              defaultStartTime={startTime}
-              defaultEndTime={endTime}
-              deviceId={deviceId}
-              onDraftChange={setDraftReport}
-              onCancel={() => setShowReportForm(false)}
-              onSubmitted={() => {
-                setShowReportForm(false);
-                onReportSubmitted();
-              }}
-            />
-          ) : (
-            <button
-              type="button"
-              className={styles.reportTrigger}
-              onClick={() => setShowReportForm(true)}
-            >
-              See a class here that isn&apos;t shown? Report it
-            </button>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="start-time" className={fieldLabelClass}>
+                Start
+              </Label>
+              <Input
+                id="start-time"
+                type="time"
+                step="1800"
+                className={timeInputClass}
+                value={`${startTime.slice(0, 2)}:${startTime.slice(2)}`}
+                onChange={e => onStartTimeChange(e.target.value.replace(":", ""))}
+                disabled={nowActive}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="end-time" className={fieldLabelClass}>
+                End
+              </Label>
+              <Input
+                id="end-time"
+                type="time"
+                step="1800"
+                className={timeInputClass}
+                value={`${endTime.slice(0, 2)}:${endTime.slice(2)}`}
+                onChange={e => onEndTimeChange(e.target.value.replace(":", ""))}
+                disabled={nowActive}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="now-toggle" className={fieldLabelClass}>
+                Now
+              </Label>
+              <label
+                htmlFor="now-toggle"
+                className={cn(
+                  "flex h-10 cursor-pointer items-center justify-between gap-2 rounded-lg border border-input bg-surface px-3 text-sm transition-colors",
+                  nowActive && "border-primary bg-accent text-accent-foreground"
+                )}
+                title={
+                  nowActive
+                    ? "Showing live availability — switch off to unlock day/time"
+                    : "Lock to live availability right now"
+                }
+              >
+                <span className="flex items-center gap-2 font-medium">
+                  <span
+                    className={cn(
+                      "size-2 rounded-full",
+                      nowActive
+                        ? "bg-live animate-[liveGlow_2s_ease-in-out_infinite]"
+                        : "bg-muted-foreground/40"
+                    )}
+                  />
+                  {nowActive ? "Live" : "Off"}
+                </span>
+                <Switch
+                  id="now-toggle"
+                  checked={nowActive}
+                  onCheckedChange={onToggleNow}
+                />
+              </label>
+            </div>
+          </div>
+
+          {invalidRange && (
+            <p className="text-sm text-destructive">
+              End time must be after start time.
+            </p>
           )}
-
-          <WeeklyScheduleGrid
-            weeklySchedule={weeklySchedule}
-            reportedSchedule={scheduleForGrid}
-            showNowPointer={showNowPointer}
-            nowPosition={nowPosition}
-            currentDay={currentDay}
-          />
         </div>
-      )}
-    </div>
+
+        {selectedBuilding && !invalidRange && (
+          <>
+            <RoomCardSection
+              title="Available"
+              rooms={availableRooms}
+              variantClass="border-l-available"
+              emptyMessage="No rooms available for this time."
+              selectedRoom={selectedRoom}
+              reportedRooms={reportedRoomsInWindow}
+              onSelect={toggleRoom}
+            />
+
+            <RoomCardSection
+              title="Busy"
+              rooms={busyRooms}
+              variantClass="border-l-busy opacity-65"
+              emptyMessage="All rooms are free at this time."
+              selectedRoom={selectedRoom}
+              reportedRooms={reportedRoomsInWindow}
+              onSelect={toggleRoom}
+            />
+          </>
+        )}
+
+        {selectedRoom && selectedStatus && (
+          <div
+            ref={detailRef}
+            className="mt-6 scroll-mt-6 animate-in fade-in-0 slide-in-from-bottom-1 duration-300"
+          >
+            <Separator className="mb-6" />
+
+            <div className="flex flex-col items-center gap-3 rounded-xl bg-surface p-6 text-center ring-1 ring-border">
+              <p className="text-sm text-muted-foreground">
+                Room {selectedRoom} · {DAY_LABELS[selectedDay]}{" "}
+                {startTime.slice(0, 2)}:{startTime.slice(2)}
+                {" – "}
+                {endTime.slice(0, 2)}:{endTime.slice(2)}
+              </p>
+
+              <p
+                className={cn(
+                  "text-3xl font-bold tracking-tight",
+                  selectedStatus.available ? "text-available" : "text-busy"
+                )}
+              >
+                {selectedStatus.available ? "AVAILABLE" : "BUSY"}
+              </p>
+            </div>
+
+            {matchingReports.map(report => (
+              <ReportedClassCard
+                key={report.id}
+                report={report}
+                deviceId={deviceId}
+                onVote={onVote}
+                voting={votingReportId === report.id}
+              />
+            ))}
+
+            {showReportForm ? (
+              <ReportClassForm
+                building={selectedBuilding}
+                room={selectedRoom}
+                defaultDay={selectedDay}
+                defaultStartTime={startTime}
+                defaultEndTime={endTime}
+                deviceId={deviceId}
+                onDraftChange={setDraftReport}
+                onCancel={() => setShowReportForm(false)}
+                onSubmitted={() => {
+                  setShowReportForm(false);
+                  onReportSubmitted();
+                }}
+              />
+            ) : (
+              <Button
+                type="button"
+                variant="outline"
+                className="mt-4 h-10 w-full border-dashed border-reported bg-transparent text-reported hover:bg-reported/10 hover:text-reported dark:border-reported dark:bg-transparent dark:hover:bg-reported/10"
+                onClick={() => setShowReportForm(true)}
+              >
+                <Flag />
+                See a class here that isn&apos;t shown? Report it
+              </Button>
+            )}
+
+            <WeeklyScheduleGrid
+              weeklySchedule={weeklySchedule}
+              reportedSchedule={scheduleForGrid}
+              showNowPointer={showNowPointer}
+              nowPosition={nowPosition}
+              currentDay={currentDay}
+            />
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

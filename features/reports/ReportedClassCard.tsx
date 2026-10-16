@@ -1,6 +1,10 @@
 "use client";
 
-import styles from "@/app/page.module.css";
+import { Flag, ThumbsDown, ThumbsUp } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { DAY_LABELS } from "@/lib/time";
 import type { ClassReport, ReportVote } from "./reportTypes";
 
@@ -10,6 +14,9 @@ type ReportedClassCardProps = {
   onVote: (reportId: string, vote: ReportVote) => void;
   voting: boolean;
 };
+
+const voteButtonClass =
+  "border-reported bg-surface font-semibold text-reported-foreground hover:bg-reported/10 hover:text-reported-foreground dark:border-reported dark:bg-surface dark:hover:bg-reported/15";
 
 function formatTime(time: string): string {
   return `${time.slice(0, 2)}:${time.slice(2)}`;
@@ -27,26 +34,32 @@ export function ReportedClassCard({
   const disputeLabel = report.denies > 0 ? `, ${report.denies} disputed` : "";
 
   return (
-    <div className={styles.reportCard}>
-      <span className={styles.reportBadge}>Reported</span>
+    <Card className="mt-4 gap-2 border border-reported-border bg-reported-surface px-4 py-4 text-reported-foreground ring-0">
+      <Badge
+        variant="outline"
+        className="border-reported/40 font-bold tracking-wide text-reported uppercase"
+      >
+        <Flag />
+        Reported
+      </Badge>
 
-      <p className={styles.reportCourse}>
+      <p className="text-[15px] font-bold">
         {report.subject} {report.courseNumber}
         {report.section ? `-${report.section}` : ""}
       </p>
 
-      <p className={styles.reportMeta}>
+      <p className="text-sm">
         {DAY_LABELS[report.day]} {formatTime(report.startTime)}
         {" – "}
         {formatTime(report.endTime)}
         {report.instructor ? ` · ${report.instructor}` : ""}
       </p>
 
-      {report.note && <p className={styles.reportNote}>&ldquo;{report.note}&rdquo;</p>}
+      {report.note && <p className="text-sm italic">&ldquo;{report.note}&rdquo;</p>}
 
-      <p className={styles.reportConfidence}>
+      <p className="text-sm font-semibold">
         {confidencePercent}% reliable
-        <span className={styles.reportConfidenceDetail}>
+        <span className="font-normal opacity-85">
           {" "}
           ({confirmationLabel}
           {disputeLabel})
@@ -54,34 +67,44 @@ export function ReportedClassCard({
       </p>
 
       {isOwnReport ? (
-        <p className={styles.reportMeta}>You reported this class.</p>
+        <p className="text-sm">You reported this class.</p>
       ) : (
-        <div className={styles.reportVotes}>
-          <span className={styles.reportVotePrompt}>Is this still happening?</span>
+        <div className="mt-1 flex flex-wrap items-center gap-2">
+          <span className="mr-1 text-sm">Is this still happening?</span>
 
-          <button
+          <Button
             type="button"
+            size="sm"
+            variant="outline"
             disabled={voting}
             onClick={() => onVote(report.id, "confirm")}
-            className={`${styles.voteButton} ${
-              report.userVote === "confirm" ? styles.voteButtonConfirmActive : ""
-            }`}
+            className={cn(
+              voteButtonClass,
+              report.userVote === "confirm" &&
+                "border-primary bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground dark:border-primary dark:bg-primary dark:hover:bg-primary/90"
+            )}
           >
+            <ThumbsUp />
             Yes ({report.confirms})
-          </button>
+          </Button>
 
-          <button
+          <Button
             type="button"
+            size="sm"
+            variant="outline"
             disabled={voting}
             onClick={() => onVote(report.id, "deny")}
-            className={`${styles.voteButton} ${
-              report.userVote === "deny" ? styles.voteButtonDenyActive : ""
-            }`}
+            className={cn(
+              voteButtonClass,
+              report.userVote === "deny" &&
+                "border-deny bg-deny text-white hover:bg-deny/90 hover:text-white dark:border-deny dark:bg-deny dark:hover:bg-deny/90"
+            )}
           >
+            <ThumbsDown />
             No ({report.denies})
-          </button>
+          </Button>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

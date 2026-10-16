@@ -1,10 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import styles from "@/app/page.module.css";
+import { CircleCheck, LoaderCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { REPORT_DAY_CODES, type DayCode } from "@/lib/time";
 import { DaySelect } from "@/components/DaySelect";
 import type { DraftReport } from "./reportTypes";
+
+const formCardClass =
+  "mt-4 gap-4 overflow-visible border border-reported-border bg-reported-surface p-5 ring-0";
+
+const fieldLabelClass =
+  "text-xs font-semibold tracking-wide text-muted-foreground uppercase";
+
+const fieldClass = "h-10 bg-surface dark:bg-surface";
 
 type ReportClassFormProps = {
   building: string;
@@ -99,125 +113,163 @@ export function ReportClassForm({
 
   if (submitted) {
     return (
-      <div className={`${styles.reportFormCard} ${styles.fadeIn}`}>
-        <p className={styles.reportSuccess}>
+      <Card className={cn(formCardClass, "animate-in fade-in-0 slide-in-from-bottom-1 duration-300")}>
+        <p className="flex items-center justify-center gap-2 py-2 text-center font-semibold text-primary dark:text-accent-foreground">
+          <CircleCheck className="size-5 shrink-0" />
           {merged
-            ? "✓ Thanks for confirming! This matches an existing report, so it now counts as a confirmation."
-            : "✓ Thanks! Your report was submitted and is now visible to other students."}
+            ? "Thanks for confirming! This matches an existing report, so it now counts as a confirmation."
+            : "Thanks! Your report was submitted and is now visible to other students."}
         </p>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <form className={styles.reportFormCard} onSubmit={handleSubmit}>
-      <p className={styles.reportFormTitle}>
-        Report a class in Room {room}
-      </p>
+    <Card className={formCardClass}>
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <p className="text-[15px] font-bold text-reported-foreground">
+          Report a class in Room {room}
+        </p>
 
-      <div className={styles.reportFormRow}>
-        <label className={styles.fieldLabel}>
-          Subject
-          <input
-            type="text"
-            placeholder="e.g. MATH"
-            value={subject}
-            onChange={e => setSubject(e.target.value)}
-            required
-          />
-        </label>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="report-subject" className={fieldLabelClass}>
+              Subject
+            </Label>
+            <Input
+              id="report-subject"
+              type="text"
+              placeholder="e.g. MATH"
+              className={fieldClass}
+              value={subject}
+              onChange={e => setSubject(e.target.value)}
+              required
+            />
+          </div>
 
-        <label className={styles.fieldLabel}>
-          Course #
-          <input
-            type="text"
-            placeholder="e.g. 101"
-            value={courseNumber}
-            onChange={e => setCourseNumber(e.target.value)}
-            required
-          />
-        </label>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="report-course" className={fieldLabelClass}>
+              Course #
+            </Label>
+            <Input
+              id="report-course"
+              type="text"
+              placeholder="e.g. 101"
+              className={fieldClass}
+              value={courseNumber}
+              onChange={e => setCourseNumber(e.target.value)}
+              required
+            />
+          </div>
 
-        <label className={styles.fieldLabel}>
-          Section
-          <input
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="report-section" className={fieldLabelClass}>
+              Section
+            </Label>
+            <Input
+              id="report-section"
+              type="text"
+              placeholder="optional"
+              className={fieldClass}
+              value={section}
+              onChange={e => setSection(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="report-instructor" className={fieldLabelClass}>
+            Instructor
+          </Label>
+          <Input
+            id="report-instructor"
             type="text"
             placeholder="optional"
-            value={section}
-            onChange={e => setSection(e.target.value)}
+            className={fieldClass}
+            value={instructor}
+            onChange={e => setInstructor(e.target.value)}
           />
-        </label>
-      </div>
+        </div>
 
-      <label className={styles.fieldLabel}>
-        Instructor
-        <input
-          type="text"
-          placeholder="optional"
-          value={instructor}
-          onChange={e => setInstructor(e.target.value)}
-        />
-      </label>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="flex flex-col gap-2">
+            <Label className={fieldLabelClass}>Day</Label>
+            <DaySelect days={REPORT_DAY_CODES} selectedDay={day} onChange={setDay} />
+          </div>
 
-      <label className={styles.fieldLabel}>
-        Day
-        <DaySelect days={REPORT_DAY_CODES} selectedDay={day} onChange={setDay} />
-      </label>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="report-start" className={fieldLabelClass}>
+              Start
+            </Label>
+            <Input
+              id="report-start"
+              type="time"
+              step="1800"
+              className={fieldClass}
+              value={`${startTime.slice(0, 2)}:${startTime.slice(2)}`}
+              onChange={e => setStartTime(e.target.value.replace(":", ""))}
+            />
+          </div>
 
-      <div className={styles.timeRow}>
-        <label className={styles.fieldLabel}>
-          Start
-          <input
-            type="time"
-            step="1800"
-            value={`${startTime.slice(0, 2)}:${startTime.slice(2)}`}
-            onChange={e => setStartTime(e.target.value.replace(":", ""))}
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="report-end" className={fieldLabelClass}>
+              End
+            </Label>
+            <Input
+              id="report-end"
+              type="time"
+              step="1800"
+              className={fieldClass}
+              value={`${endTime.slice(0, 2)}:${endTime.slice(2)}`}
+              onChange={e => setEndTime(e.target.value.replace(":", ""))}
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="report-note" className={fieldLabelClass}>
+            Note
+          </Label>
+          <Textarea
+            id="report-note"
+            placeholder="optional details (e.g. makeup class, moved section)"
+            className="min-h-16 bg-surface dark:bg-surface"
+            value={note}
+            onChange={e => setNote(e.target.value)}
+            rows={2}
           />
-        </label>
+        </div>
 
-        <label className={styles.fieldLabel}>
-          End
-          <input
-            type="time"
-            step="1800"
-            value={`${endTime.slice(0, 2)}:${endTime.slice(2)}`}
-            onChange={e => setEndTime(e.target.value.replace(":", ""))}
-          />
-        </label>
-      </div>
+        {invalidRange && (
+          <p className="text-sm text-destructive">
+            End time must be after start time.
+          </p>
+        )}
 
-      <label className={styles.fieldLabel}>
-        Note
-        <textarea
-          placeholder="optional details (e.g. makeup class, moved section)"
-          value={note}
-          onChange={e => setNote(e.target.value)}
-          rows={2}
-        />
-      </label>
+        {error && <p className="text-sm text-destructive">{error}</p>}
 
-      {invalidRange && (
-        <p className={styles.validationHint}>
-          End time must be after start time.
-        </p>
-      )}
+        <div className="flex items-center justify-end gap-2">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onCancel}
+            disabled={submitting}
+          >
+            Cancel
+          </Button>
 
-      {error && <p className={styles.validationHint}>{error}</p>}
-
-      <div className={styles.reportFormActions}>
-        <button
-          type="button"
-          className={styles.resetLink}
-          onClick={onCancel}
-          disabled={submitting}
-        >
-          Cancel
-        </button>
-
-        <button type="submit" className={styles.button} disabled={submitting}>
-          {submitting ? "Submitting…" : "Submit report"}
-        </button>
-      </div>
-    </form>
+          <Button type="submit" className="h-9 px-4" disabled={submitting}>
+            {submitting ? (
+              <>
+                <LoaderCircle className="animate-spin" />
+                Submitting…
+              </>
+            ) : (
+              "Submit report"
+            )}
+          </Button>
+        </div>
+      </form>
+    </Card>
   );
 }

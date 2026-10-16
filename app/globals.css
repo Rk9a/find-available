@@ -1,32 +1,125 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  background-color: #ffffff;
-  color: #111111 ;
-  font-family: Arial, Helvetica, sans-serif;
-  html, body {
-  font-family: monospace;
-}
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* useDarkMode toggles html[data-theme="dark"], so dark: utilities key off that. */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme inline {
+  --font-sans: var(--font-mono);
+  --font-mono: var(--font-mono);
+  --font-heading: var(--font-mono);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-available: var(--available);
+  --color-busy: var(--busy);
+  --color-reported: var(--reported);
+  --color-reported-foreground: var(--reported-foreground);
+  --color-reported-surface: var(--reported-surface);
+  --color-reported-border: var(--reported-border);
+  --color-deny: var(--deny);
+  --color-now: var(--now);
+  --color-live: var(--live);
+  --color-loading: var(--loading);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-* {
-  box-sizing: border-box;
-}
-button,
-input,
-select,
-textarea {
-  font-family: inherit;
-}
-html,
-body {
-  background-color: #e1e1e1;
+/* Brand palette — same colors the app has always used. */
+:root {
+  --radius: 0.75rem;
+
+  --background: #e1e1e1;
+  --foreground: #111111;
+  --card: #f9fafb;
+  --card-foreground: #111111;
+  --surface: #ffffff;
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+
+  --primary: #115e65;
+  --primary-foreground: #ffffff;
+  --secondary: #f0fdfa;
+  --secondary-foreground: #115e65;
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+  --accent: #f0fdfa;
+  --accent-foreground: #115e65;
+  --destructive: #991b1b;
+
+  --border: #e5e7eb;
+  --input: #d1d5db;
+  --ring: #115e65;
+
+  --available: #115e65;
+  --busy: #991b1b;
+  --reported: #d97706;
+  --reported-foreground: #78350f;
+  --reported-surface: #fffbeb;
+  --reported-border: #fde68a;
+  --deny: #991b1b;
+  --now: #dc2626;
+  --live: #22c55e;
+  --loading: #eab308;
 }
 
-html[data-theme="dark"],
-html[data-theme="dark"] body {
-  background-color: #181818;
+[data-theme="dark"] {
+  --background: #181818;
+  --foreground: #e8e8e8;
+  --card: #242424;
+  --card-foreground: #e8e8e8;
+  --surface: #2c2c2c;
+  --popover: #242424;
+  --popover-foreground: #e8e8e8;
+
+  --primary: #0f766e;
+  --primary-foreground: #ffffff;
+  --secondary: #1c3d3f;
+  --secondary-foreground: #5eead4;
+  --muted: #303030;
+  --muted-foreground: #a8a8a8;
+  --accent: #1c3d3f;
+  --accent-foreground: #5eead4;
+  --destructive: #f87171;
+
+  --border: #353535;
+  --input: #404040;
+  --ring: #5eead4;
+
+  --available: #5eead4;
+  --busy: #f87171;
+  --reported: #fbbf24;
+  --reported-foreground: #fcd34d;
+  --reported-surface: rgba(217, 119, 6, 0.1);
+  --reported-border: #92400e;
+  --deny: #991b1b;
+  --now: #dc2626;
+  --live: #22c55e;
+  --loading: #eab308;
 }
+
 html {
   color-scheme: light;
 }
@@ -34,79 +127,58 @@ html {
 html[data-theme="dark"] {
   color-scheme: dark;
 }
-body {
-  margin: 0;
-  background-color: #e1e1e1;
-  color: #111111;
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  h1,
+  h2,
+  h3 {
+    font-weight: 600;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
-.site-footer {
-  position: relative;
-  width: 100%;
-  text-align: center;
-  padding: 12px 0;
-  font-size: 13px;
-  letter-spacing: 1px;
-  opacity: 0.7;
-
-  background-color: #ffffff;
-  color: #111111;
-  border-top: 1px solid #e5e5e5;
+@keyframes liveGlow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 4px #22c55e,
+      0 0 8px rgba(34, 197, 94, 0.5);
+  }
+  50% {
+    box-shadow:
+      0 0 7px #22c55e,
+      0 0 14px rgba(34, 197, 94, 0.8),
+      0 0 20px rgba(34, 197, 94, 0.4);
+  }
 }
 
-html[data-theme="dark"] body {
-  background-color: #181818;
-  color: #e8e8e8;
-}
-
-html[data-theme="dark"] .site-footer {
-  background-color: #181818;
-  color: #e8e8e8;
-  border-top-color: #303030;
-}
-.loadingSkeleton {
-  width: 100%;
-  animation: skeletonFade 1.3s ease-in-out infinite;
-}
-
-.skeletonMode {
-  width: 100%;
-  height: 44px;
-  border-radius: 12px;
-  background: rgba(128, 128, 128, 0.15);
-  margin-bottom: 18px;
-}
-
-.skeletonText {
-  width: 55%;
-  height: 12px;
-  border-radius: 6px;
-  background: rgba(128, 128, 128, 0.15);
-  margin: 0 auto 26px;
-}
-
-.skeletonCard {
-  padding: 24px;
-  border-radius: 16px;
-  background: rgba(128, 128, 128, 0.08);
-
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.skeletonInput {
-  height: 42px;
-  border-radius: 10px;
-  background: rgba(128, 128, 128, 0.15);
-}
-
-@keyframes skeletonFade {
+@keyframes draftPulse {
   0%,
   100% {
     opacity: 0.55;
   }
+  50% {
+    opacity: 0.9;
+  }
+}
 
+@keyframes loadingGlow {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
   50% {
     opacity: 1;
   }
