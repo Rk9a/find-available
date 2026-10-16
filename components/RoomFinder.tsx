@@ -28,7 +28,10 @@ import { WeeklyScheduleGrid } from "./WeeklyScheduleGrid";
 const fieldLabelClass =
   "text-xs font-semibold tracking-wide text-muted-foreground uppercase";
 
-const timeInputClass = "h-10 bg-surface dark:bg-surface";
+// Same height and horizontal padding as the Day select; line-height centres
+// the value once iOS's native time-input styling is reset (see globals.css).
+const timeInputClass =
+  "h-10 px-3 py-0 leading-[38px] bg-surface dark:bg-surface";
 
 type RoomCardSectionProps = {
   title: string;
@@ -239,7 +242,7 @@ export function RoomFinder({
 
       <CardContent className="mt-3 px-4 sm:mt-4 sm:px-6">
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
+          <div className="flex min-w-0 flex-col gap-2">
             <Label className={fieldLabelClass}>Building</Label>
             <BuildingCombobox
               buildings={buildings}
@@ -249,7 +252,7 @@ export function RoomFinder({
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="flex flex-col gap-2">
+            <div className="flex min-w-0 flex-col gap-2">
               <Label className={fieldLabelClass}>Day</Label>
               <DaySelect
                 days={SEARCH_DAY_CODES}
@@ -260,7 +263,7 @@ export function RoomFinder({
               />
             </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex min-w-0 flex-col gap-2">
               <Label htmlFor="start-time" className={fieldLabelClass}>
                 Start
               </Label>
@@ -275,7 +278,7 @@ export function RoomFinder({
               />
             </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex min-w-0 flex-col gap-2">
               <Label htmlFor="end-time" className={fieldLabelClass}>
                 End
               </Label>
@@ -290,14 +293,14 @@ export function RoomFinder({
               />
             </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex min-w-0 flex-col gap-2">
               <Label htmlFor="now-toggle" className={fieldLabelClass}>
                 Now
               </Label>
               <label
                 htmlFor="now-toggle"
                 className={cn(
-                  "flex h-10 cursor-pointer items-center justify-between gap-2 rounded-lg border border-input bg-surface px-3 text-sm transition-colors",
+                  "flex h-10 min-w-0 cursor-pointer items-center justify-between gap-2 rounded-lg border border-input bg-surface px-3 text-sm transition-colors",
                   nowActive && "border-primary bg-accent text-accent-foreground"
                 )}
                 title={

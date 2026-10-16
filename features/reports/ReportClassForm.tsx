@@ -20,6 +20,8 @@ const fieldLabelClass =
 
 const fieldClass = "h-10 bg-surface dark:bg-surface";
 
+const timeFieldClass = cn(fieldClass, "px-3 py-0 leading-[38px]");
+
 type ReportClassFormProps = {
   building: string;
   room: string;
@@ -132,7 +134,7 @@ export function ReportClassForm({
         </p>
 
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
-          <div className="flex flex-col gap-2">
+          <div className="flex min-w-0 flex-col gap-2">
             <Label htmlFor="report-subject" className={fieldLabelClass}>
               Subject
             </Label>
@@ -147,7 +149,7 @@ export function ReportClassForm({
             />
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex min-w-0 flex-col gap-2">
             <Label htmlFor="report-course" className={fieldLabelClass}>
               Course #
             </Label>
@@ -162,7 +164,7 @@ export function ReportClassForm({
             />
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex min-w-0 flex-col gap-2">
             <Label htmlFor="report-section" className={fieldLabelClass}>
               Section
             </Label>
@@ -177,7 +179,7 @@ export function ReportClassForm({
           </div>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex min-w-0 flex-col gap-2">
           <Label htmlFor="report-instructor" className={fieldLabelClass}>
             Instructor
           </Label>
@@ -192,12 +194,12 @@ export function ReportClassForm({
         </div>
 
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
-          <div className="col-span-2 flex flex-col gap-2 sm:col-span-1">
+          <div className="col-span-2 flex min-w-0 flex-col gap-2 sm:col-span-1">
             <Label className={fieldLabelClass}>Day</Label>
             <DaySelect days={REPORT_DAY_CODES} selectedDay={day} onChange={setDay} />
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex min-w-0 flex-col gap-2">
             <Label htmlFor="report-start" className={fieldLabelClass}>
               Start
             </Label>
@@ -205,13 +207,13 @@ export function ReportClassForm({
               id="report-start"
               type="time"
               step="1800"
-              className={fieldClass}
+              className={timeFieldClass}
               value={`${startTime.slice(0, 2)}:${startTime.slice(2)}`}
               onChange={e => setStartTime(e.target.value.replace(":", ""))}
             />
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex min-w-0 flex-col gap-2">
             <Label htmlFor="report-end" className={fieldLabelClass}>
               End
             </Label>
@@ -219,14 +221,14 @@ export function ReportClassForm({
               id="report-end"
               type="time"
               step="1800"
-              className={fieldClass}
+              className={timeFieldClass}
               value={`${endTime.slice(0, 2)}:${endTime.slice(2)}`}
               onChange={e => setEndTime(e.target.value.replace(":", ""))}
             />
           </div>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex min-w-0 flex-col gap-2">
           <Label htmlFor="report-note" className={fieldLabelClass}>
             Note
           </Label>

@@ -147,6 +147,26 @@ html[data-theme="dark"] {
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+
+  /* iOS Safari renders time/date inputs as native controls with their own
+     intrinsic width, height, padding and centered text, which pushes them
+     out of their grid column. Strip the native styling so they size like
+     every other input (height, padding and radius come from <Input>). */
+  input[type="time"],
+  input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  input[type="time"]::-webkit-date-and-time-value,
+  input[type="date"]::-webkit-date-and-time-value {
+    margin: 0;
+    text-align: left;
+  }
 }
 
 @keyframes liveGlow {
