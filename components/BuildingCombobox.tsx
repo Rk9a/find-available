@@ -75,7 +75,7 @@ export function BuildingCombobox({
           aria-expanded={open}
           aria-autocomplete="list"
           autoComplete="off"
-          placeholder="Search building (e.g. 22, 24)"
+          placeholder="Building, e.g. 22"
           value={query}
           className="h-10 bg-surface pr-10 pl-9 dark:bg-surface"
           onChange={e => {

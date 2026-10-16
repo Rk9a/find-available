@@ -50,7 +50,7 @@ function RoomCardSection({
   onSelect,
 }: RoomCardSectionProps) {
   return (
-    <section className="mt-6">
+    <section className="mt-5 sm:mt-6">
       <div className="mb-3 flex items-center gap-2">
         <h2 className="text-sm font-semibold">{title}</h2>
         <Badge variant="secondary">{rooms.length}</Badge>
@@ -58,7 +58,7 @@ function RoomCardSection({
       {rooms.length === 0 ? (
         <p className="text-sm text-muted-foreground">{emptyMessage}</p>
       ) : (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-3 animate-in fade-in-0 slide-in-from-bottom-1 duration-300">
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-[repeat(auto-fill,minmax(120px,1fr))] sm:gap-3 animate-in fade-in-0 slide-in-from-bottom-1 duration-300">
           {rooms.map(({ room }) => (
             <Button
               key={room}
@@ -67,7 +67,7 @@ function RoomCardSection({
               onClick={() => onSelect(room)}
               aria-pressed={room === selectedRoom}
               className={cn(
-                "h-12 gap-2 border-l-4 bg-surface shadow-xs hover:shadow-md dark:bg-surface",
+                "h-10 gap-1.5 border-l-[3px] bg-surface px-1 text-[13px] shadow-none sm:h-12 sm:gap-2 sm:border-l-4 sm:px-2.5 sm:text-sm sm:shadow-xs sm:hover:shadow-md dark:bg-surface",
                 variantClass,
                 room === selectedRoom &&
                   "ring-2 ring-primary ring-offset-2 ring-offset-card"
@@ -222,8 +222,8 @@ export function RoomFinder({
     : reportedSchedule;
 
   return (
-    <Card className="mb-8 gap-0 overflow-visible py-6 shadow-lg ring-border">
-      <CardHeader className="flex items-center justify-between px-6">
+    <Card className="mb-8 gap-0 overflow-visible py-4 shadow-lg ring-border sm:py-6">
+      <CardHeader className="flex items-center justify-between px-4 sm:px-6">
         <CardTitle className="text-lg font-semibold">Find a room</CardTitle>
         <Button
           type="button"
@@ -237,7 +237,7 @@ export function RoomFinder({
         </Button>
       </CardHeader>
 
-      <CardContent className="mt-4 px-6">
+      <CardContent className="mt-3 px-4 sm:mt-4 sm:px-6">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <Label className={fieldLabelClass}>Building</Label>
@@ -364,7 +364,7 @@ export function RoomFinder({
           >
             <Separator className="mb-6" />
 
-            <div className="flex flex-col items-center gap-3 rounded-xl bg-surface p-6 text-center ring-1 ring-border">
+            <div className="flex flex-col items-center gap-3 rounded-xl bg-surface p-4 text-center ring-1 ring-border sm:p-6">
               <p className="text-sm text-muted-foreground">
                 Room {selectedRoom} · {DAY_LABELS[selectedDay]}{" "}
                 {startTime.slice(0, 2)}:{startTime.slice(2)}
@@ -374,7 +374,7 @@ export function RoomFinder({
 
               <p
                 className={cn(
-                  "text-3xl font-bold tracking-tight",
+                  "text-2xl font-bold tracking-tight sm:text-3xl",
                   selectedStatus.available ? "text-available" : "text-busy"
                 )}
               >
@@ -411,7 +411,7 @@ export function RoomFinder({
               <Button
                 type="button"
                 variant="outline"
-                className="mt-4 h-10 w-full border-dashed border-reported bg-transparent text-reported hover:bg-reported/10 hover:text-reported dark:border-reported dark:bg-transparent dark:hover:bg-reported/10"
+                className="mt-4 h-auto min-h-10 w-full border-dashed py-2 whitespace-normal border-reported bg-transparent text-reported hover:bg-reported/10 hover:text-reported dark:border-reported dark:bg-transparent dark:hover:bg-reported/10"
                 onClick={() => setShowReportForm(true)}
               >
                 <Flag />
@@ -425,6 +425,7 @@ export function RoomFinder({
               showNowPointer={showNowPointer}
               nowPosition={nowPosition}
               currentDay={currentDay}
+              focusDayKey={dayCodeToWeekdayKey(selectedDay)}
             />
           </div>
         )}

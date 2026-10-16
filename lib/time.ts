@@ -97,7 +97,9 @@ function minutesToTimeCode(totalMinutes: number): string {
 }
 
 // Rounds "now" down to the nearest 30-minute step and gives it a 1-hour
-// window, clamped to the schedule's displayed hours (07:00-22:00).
+// window, clamped to the schedule's displayed hours (07:00-22:00). The
+// start is capped at one hour before closing so the window never collapses
+// to zero length late in the evening (e.g. 22:00-22:00 after 22:00).
 export function getNowTimeWindow(
   hour: number,
   minute: number
@@ -106,8 +108,11 @@ export function getNowTimeWindow(
     Math.max(hour * 60 + minute, SCHEDULE_START),
     SCHEDULE_END
   );
-  const start = Math.floor(nowMinutes / 30) * 30;
-  const end = Math.min(start + 60, SCHEDULE_END);
+  const start = Math.min(
+    Math.floor(nowMinutes / 30) * 30,
+    SCHEDULE_END - 60
+  );
+  const end = start + 60;
 
   return { start: minutesToTimeCode(start), end: minutesToTimeCode(end) };
 }

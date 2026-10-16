@@ -12,7 +12,7 @@ export function LiveIndicator({ loading, shortTerm }: LiveIndicatorProps) {
   return (
     <Badge
       variant="outline"
-      className="mx-auto mb-4 flex h-8 gap-2.5 bg-card px-3.5 text-sm font-semibold text-muted-foreground shadow-xs"
+      className="mx-auto mb-3 flex h-8 sm:mb-4 gap-2.5 bg-card px-3.5 text-sm font-semibold text-muted-foreground shadow-xs"
     >
       <span
         className={cn(

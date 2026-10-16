@@ -356,10 +356,17 @@ async function fetchCurrentSchedule() {
     sections: compactedSections,
   };
 }
+export const SCHEDULE_CACHE_TAG = "kfupm-schedule";
+
+// The Banner fetch (session, term selection, every page of sections) runs at
+// most about once a month. Past the revalidate window the cached copy is
+// still served instantly while a fresh one is fetched in the background, so
+// no visitor waits on Banner except when the cache is completely empty.
 export const getCurrentSchedule = unstable_cache(
   fetchCurrentSchedule,
   ["current-kfupm-schedule-v4"],
   {
-    revalidate: 60 * 60 * 24 * 7,
+    revalidate: 60 * 60 * 24 * 30,
+    tags: [SCHEDULE_CACHE_TAG],
   }
 );

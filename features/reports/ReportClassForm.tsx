@@ -13,7 +13,7 @@ import { DaySelect } from "@/components/DaySelect";
 import type { DraftReport } from "./reportTypes";
 
 const formCardClass =
-  "mt-4 gap-4 overflow-visible border border-reported-border bg-reported-surface p-5 ring-0";
+  "mt-4 gap-4 overflow-visible border border-reported-border bg-reported-surface p-4 ring-0 sm:p-5";
 
 const fieldLabelClass =
   "text-xs font-semibold tracking-wide text-muted-foreground uppercase";
@@ -131,7 +131,7 @@ export function ReportClassForm({
           Report a class in Room {room}
         </p>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           <div className="flex flex-col gap-2">
             <Label htmlFor="report-subject" className={fieldLabelClass}>
               Subject
@@ -139,7 +139,7 @@ export function ReportClassForm({
             <Input
               id="report-subject"
               type="text"
-              placeholder="e.g. MATH"
+              placeholder="MATH"
               className={fieldClass}
               value={subject}
               onChange={e => setSubject(e.target.value)}
@@ -154,7 +154,7 @@ export function ReportClassForm({
             <Input
               id="report-course"
               type="text"
-              placeholder="e.g. 101"
+              placeholder="101"
               className={fieldClass}
               value={courseNumber}
               onChange={e => setCourseNumber(e.target.value)}
@@ -191,8 +191,8 @@ export function ReportClassForm({
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
+          <div className="col-span-2 flex flex-col gap-2 sm:col-span-1">
             <Label className={fieldLabelClass}>Day</Label>
             <DaySelect days={REPORT_DAY_CODES} selectedDay={day} onChange={setDay} />
           </div>
